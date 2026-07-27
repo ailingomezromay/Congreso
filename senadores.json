@@ -1,0 +1,585 @@
+{
+  "actualizado": "2026-07-27",
+  "anio": 2025,
+  "total_votaciones": 102,
+  "presentismo_promedio": 91.2,
+  "cantidad_senadores": 72,
+  "senadores": [
+    {
+      "nombre": "Suárez, Rodolfo Alejandro",
+      "provincia": "Mendoza",
+      "bloque": "Frente Cambia Mendoza",
+      "presente": 68,
+      "total": 102,
+      "presentismo": 66.7
+    },
+    {
+      "nombre": "Rodas, Antonio",
+      "provincia": "Chaco",
+      "bloque": "Frente de Todos",
+      "presente": 52,
+      "total": 77,
+      "presentismo": 67.5
+    },
+    {
+      "nombre": "Crexell, Carmen Lucila",
+      "provincia": "Neuquén",
+      "bloque": "Juntos por el Cambio",
+      "presente": 56,
+      "total": 77,
+      "presentismo": 72.7
+    },
+    {
+      "nombre": "Terenzi, Edith Elizabeth",
+      "provincia": "Chubut",
+      "bloque": "Juntos por el Cambio Chubut",
+      "presente": 78,
+      "total": 102,
+      "presentismo": 76.5
+    },
+    {
+      "nombre": "Romero, Juan Carlos",
+      "provincia": "Salta",
+      "bloque": "Juntos por el Cambio",
+      "presente": 59,
+      "total": 77,
+      "presentismo": 76.6
+    },
+    {
+      "nombre": "Zimmermann, Victor",
+      "provincia": "Chaco",
+      "bloque": "Juntos por el Cambio",
+      "presente": 59,
+      "total": 77,
+      "presentismo": 76.6
+    },
+    {
+      "nombre": "Juri, Mariana",
+      "provincia": "Mendoza",
+      "bloque": "Frente Cambia Mendoza",
+      "presente": 81,
+      "total": 102,
+      "presentismo": 79.4
+    },
+    {
+      "nombre": "Fama, Flavio Sergio",
+      "provincia": "Catamarca",
+      "bloque": "Juntos por el Cambio",
+      "presente": 83,
+      "total": 102,
+      "presentismo": 81.4
+    },
+    {
+      "nombre": "Juez, Luis Alfredo",
+      "provincia": "Córdoba",
+      "bloque": "Juntos por el Cambio",
+      "presente": 86,
+      "total": 102,
+      "presentismo": 84.3
+    },
+    {
+      "nombre": "Montenegro, Gerardo Antenor",
+      "provincia": "Santiago del Estero",
+      "bloque": "Frente de Todos",
+      "presente": 65,
+      "total": 77,
+      "presentismo": 84.4
+    },
+    {
+      "nombre": "Losada, Carolina",
+      "provincia": "Santa Fe",
+      "bloque": "Juntos por el Cambio",
+      "presente": 87,
+      "total": 102,
+      "presentismo": 85.3
+    },
+    {
+      "nombre": "De Angeli, Alfredo Luis",
+      "provincia": "Entre Ríos",
+      "bloque": "Juntos por el Cambio",
+      "presente": 66,
+      "total": 77,
+      "presentismo": 85.7
+    },
+    {
+      "nombre": "Mendoza, Sandra Mariela",
+      "provincia": "Tucumán",
+      "bloque": "Frente de Todos",
+      "presente": 88,
+      "total": 102,
+      "presentismo": 86.3
+    },
+    {
+      "nombre": "Bedia, Vilma Facunda",
+      "provincia": "Jujuy",
+      "bloque": "Partido Renovador Federal",
+      "presente": 89,
+      "total": 102,
+      "presentismo": 87.3
+    },
+    {
+      "nombre": "Goerling Lara, Enrique Martín",
+      "provincia": "Misiones",
+      "bloque": "Juntos por el Cambio",
+      "presente": 89,
+      "total": 102,
+      "presentismo": 87.3
+    },
+    {
+      "nombre": "Olivera Lucero, Bruno Antonio",
+      "provincia": "San Juan",
+      "bloque": "Alianza la Libertad Avanza",
+      "presente": 89,
+      "total": 102,
+      "presentismo": 87.3
+    },
+    {
+      "nombre": "Bensusán, Daniel Pablo",
+      "provincia": "La Pampa",
+      "bloque": "Frente de Todos",
+      "presente": 90,
+      "total": 102,
+      "presentismo": 88.2
+    },
+    {
+      "nombre": "Paoltroni, Francisco Manuel",
+      "provincia": "Formosa",
+      "bloque": "Alianza la Libertad Avanza",
+      "presente": 90,
+      "total": 102,
+      "presentismo": 88.2
+    },
+    {
+      "nombre": "Uñac, Sergio Mauricio",
+      "provincia": "San Juan",
+      "bloque": "Alianza Unión por la Patria",
+      "presente": 90,
+      "total": 102,
+      "presentismo": 88.2
+    },
+    {
+      "nombre": "Doñate, Claudio Martín",
+      "provincia": "Río Negro",
+      "bloque": "Frente de Todos",
+      "presente": 69,
+      "total": 77,
+      "presentismo": 89.6
+    },
+    {
+      "nombre": "Gimenez, Nora del Valle",
+      "provincia": "Salta",
+      "bloque": "Frente de Todos",
+      "presente": 69,
+      "total": 77,
+      "presentismo": 89.6
+    },
+    {
+      "nombre": "Ledesma, Claudia Alejandra",
+      "provincia": "Santiago del Estero",
+      "bloque": "Frente Cívico por Santiago",
+      "presente": 69,
+      "total": 77,
+      "presentismo": 89.6
+    },
+    {
+      "nombre": "Alvarez Rivero, Carmen Silvia",
+      "provincia": "Córdoba",
+      "bloque": "Juntos por el Cambio",
+      "presente": 92,
+      "total": 102,
+      "presentismo": 90.2
+    },
+    {
+      "nombre": "Arrascaeta, Ivanna Marcela",
+      "provincia": "San Luis",
+      "bloque": "Alianza la Libertad Avanza",
+      "presente": 92,
+      "total": 102,
+      "presentismo": 90.2
+    },
+    {
+      "nombre": "Atauche, Ezequiel",
+      "provincia": "Jujuy",
+      "bloque": "Partido Renovador Federal",
+      "presente": 92,
+      "total": 102,
+      "presentismo": 90.2
+    },
+    {
+      "nombre": "Blanco, Pablo Daniel",
+      "provincia": "Tierra del Fuego, Antártida e Islas del Atlántico Sur",
+      "bloque": "Juntos por el Cambio Tierra del Fuego",
+      "presente": 70,
+      "total": 77,
+      "presentismo": 90.9
+    },
+    {
+      "nombre": "Leavy, Sergio Napoleón",
+      "provincia": "Salta",
+      "bloque": "Frente de Todos",
+      "presente": 70,
+      "total": 77,
+      "presentismo": 90.9
+    },
+    {
+      "nombre": "Olalla de Moreira, Stella Maris",
+      "provincia": "Entre Ríos",
+      "bloque": "Juntos por el Cambio",
+      "presente": 70,
+      "total": 77,
+      "presentismo": 90.9
+    },
+    {
+      "nombre": "Abad, Maximiliano",
+      "provincia": "Buenos Aires",
+      "bloque": "Juntos por el Cambio",
+      "presente": 93,
+      "total": 102,
+      "presentismo": 91.2
+    },
+    {
+      "nombre": "Abdala, Bartolomé Esteban",
+      "provincia": "San Luis",
+      "bloque": "Alianza la Libertad Avanza",
+      "presente": 93,
+      "total": 102,
+      "presentismo": 91.2
+    },
+    {
+      "nombre": "Arce, Carlos Omar",
+      "provincia": "Misiones",
+      "bloque": "Frente Renovador de la Concordia-Innovación Federal",
+      "presente": 93,
+      "total": 102,
+      "presentismo": 91.2
+    },
+    {
+      "nombre": "Neder, José Emilio",
+      "provincia": "Santiago del Estero",
+      "bloque": "Frente Fuerza Patria Peronista",
+      "presente": 93,
+      "total": 102,
+      "presentismo": 91.2
+    },
+    {
+      "nombre": "Pagotto, Juan Carlos",
+      "provincia": "La Rioja",
+      "bloque": "Alianza la Libertad Avanza",
+      "presente": 93,
+      "total": 102,
+      "presentismo": 91.2
+    },
+    {
+      "nombre": "Vigo, Alejandra María",
+      "provincia": "Córdoba",
+      "bloque": "Hacemos por Córdoba",
+      "presente": 93,
+      "total": 102,
+      "presentismo": 91.2
+    },
+    {
+      "nombre": "Rojas Decut, Sonia Elizabeth",
+      "provincia": "Misiones",
+      "bloque": "Frente Renovador de la Concordia-Innovación Federal",
+      "presente": 94,
+      "total": 102,
+      "presentismo": 92.2
+    },
+    {
+      "nombre": "García Larraburu, Silvina Marcela",
+      "provincia": "Río Negro",
+      "bloque": "Frente de Todos",
+      "presente": 71,
+      "total": 77,
+      "presentismo": 92.2
+    },
+    {
+      "nombre": "Andrada, Guillermo Eduardo",
+      "provincia": "Catamarca",
+      "bloque": "Frente de Todos",
+      "presente": 95,
+      "total": 102,
+      "presentismo": 93.1
+    },
+    {
+      "nombre": "Fernández Sagasti, Anabel",
+      "provincia": "Mendoza",
+      "bloque": "Justicialista",
+      "presente": 95,
+      "total": 102,
+      "presentismo": 93.1
+    },
+    {
+      "nombre": "Galaretto, Eduardo Horacio",
+      "provincia": "Santa Fe",
+      "bloque": "Juntos por el Cambio",
+      "presente": 95,
+      "total": 102,
+      "presentismo": 93.1
+    },
+    {
+      "nombre": "Linares, Carlos Alberto",
+      "provincia": "Chubut",
+      "bloque": "Frente de Todos",
+      "presente": 95,
+      "total": 102,
+      "presentismo": 93.1
+    },
+    {
+      "nombre": "Ávila, Beatriz Luisa",
+      "provincia": "Tucumán",
+      "bloque": "Juntos por el Cambio",
+      "presente": 96,
+      "total": 102,
+      "presentismo": 94.1
+    },
+    {
+      "nombre": "De Pedro, Eduardo Enrique",
+      "provincia": "Buenos Aires",
+      "bloque": "Alianza Unión por la Patria",
+      "presente": 96,
+      "total": 102,
+      "presentismo": 94.1
+    },
+    {
+      "nombre": "Mayans, José Miguel Ángel",
+      "provincia": "Formosa",
+      "bloque": "Alianza Unión por la Patria",
+      "presente": 96,
+      "total": 102,
+      "presentismo": 94.1
+    },
+    {
+      "nombre": "Cora, Stefanía",
+      "provincia": "Entre Ríos",
+      "bloque": "Frente de Todos",
+      "presente": 73,
+      "total": 77,
+      "presentismo": 94.8
+    },
+    {
+      "nombre": "Duré, María Eugenia",
+      "provincia": "Tierra del Fuego, Antártida e Islas del Atlántico Sur",
+      "bloque": "Frente de Todos",
+      "presente": 73,
+      "total": 77,
+      "presentismo": 94.8
+    },
+    {
+      "nombre": "Pilatti Vergara, María Inés P. E.",
+      "provincia": "Chaco",
+      "bloque": "Frente de Todos",
+      "presente": 73,
+      "total": 77,
+      "presentismo": 94.8
+    },
+    {
+      "nombre": "Sapag, Silvia Estela",
+      "provincia": "Neuquén",
+      "bloque": "Frente de Todos",
+      "presente": 73,
+      "total": 77,
+      "presentismo": 94.8
+    },
+    {
+      "nombre": "Silva, Mónica Esther",
+      "provincia": "Río Negro",
+      "bloque": "Juntos Somos Río Negro",
+      "presente": 73,
+      "total": 77,
+      "presentismo": 94.8
+    },
+    {
+      "nombre": "Kroneberger, Daniel Ricardo",
+      "provincia": "La Pampa",
+      "bloque": "Juntos por el Cambio",
+      "presente": 97,
+      "total": 102,
+      "presentismo": 95.1
+    },
+    {
+      "nombre": "Moisés, María Carolina",
+      "provincia": "Jujuy",
+      "bloque": "Alianza Unión por la Patria",
+      "presente": 97,
+      "total": 102,
+      "presentismo": 95.1
+    },
+    {
+      "nombre": "Recalde, Mariano",
+      "provincia": "Ciudad Autónoma de Buenos Aires",
+      "bloque": "Fuerza Patria",
+      "presente": 97,
+      "total": 102,
+      "presentismo": 95.1
+    },
+    {
+      "nombre": "Carambia, José María",
+      "provincia": "Santa Cruz",
+      "bloque": "Alianza por Santa Cruz",
+      "presente": 98,
+      "total": 102,
+      "presentismo": 96.1
+    },
+    {
+      "nombre": "Corpacci, Lucia Benigna",
+      "provincia": "Catamarca",
+      "bloque": "Frente de Todos",
+      "presente": 98,
+      "total": 102,
+      "presentismo": 96.1
+    },
+    {
+      "nombre": "Lewandowski, Marcelo Néstor",
+      "provincia": "Santa Fe",
+      "bloque": "Frente de Todos",
+      "presente": 98,
+      "total": 102,
+      "presentismo": 96.1
+    },
+    {
+      "nombre": "López, María Florencia",
+      "provincia": "La Rioja",
+      "bloque": "Alianza Unión por la Patria",
+      "presente": 98,
+      "total": 102,
+      "presentismo": 96.1
+    },
+    {
+      "nombre": "Cristina, Andrea Marcela",
+      "provincia": "Chubut",
+      "bloque": "Juntos por el Cambio Chubut",
+      "presente": 99,
+      "total": 102,
+      "presentismo": 97.1
+    },
+    {
+      "nombre": "Giménez Navarro, María Celeste",
+      "provincia": "San Juan",
+      "bloque": "Alianza Unión por la Patria",
+      "presente": 99,
+      "total": 102,
+      "presentismo": 97.1
+    },
+    {
+      "nombre": "Kirchner, Alicia Margarita Antonia",
+      "provincia": "Santa Cruz",
+      "bloque": "Alianza Unión por la Patria",
+      "presente": 99,
+      "total": 102,
+      "presentismo": 97.1
+    },
+    {
+      "nombre": "Lousteau, Martín",
+      "provincia": "Ciudad Autónoma de Buenos Aires",
+      "bloque": "Juntos por el Cambio",
+      "presente": 75,
+      "total": 77,
+      "presentismo": 97.4
+    },
+    {
+      "nombre": "Parrilli, Oscar Isidro",
+      "provincia": "Neuquén",
+      "bloque": "Frente de Todos",
+      "presente": 75,
+      "total": 77,
+      "presentismo": 97.4
+    },
+    {
+      "nombre": "Huala, María Victória",
+      "provincia": "La Pampa",
+      "bloque": "Juntos por el Cambio",
+      "presente": 100,
+      "total": 102,
+      "presentismo": 98.0
+    },
+    {
+      "nombre": "Tagliaferri, Guadalupe",
+      "provincia": "Ciudad Autónoma de Buenos Aires",
+      "bloque": "Juntos por el Cambio",
+      "presente": 76,
+      "total": 77,
+      "presentismo": 98.7
+    },
+    {
+      "nombre": "Di Tullio, Juliana",
+      "provincia": "Buenos Aires",
+      "bloque": "Alianza Unión por la Patria",
+      "presente": 101,
+      "total": 102,
+      "presentismo": 99.0
+    },
+    {
+      "nombre": "Gadano, Natalia Elena",
+      "provincia": "Santa Cruz",
+      "bloque": "Alianza por Santa Cruz",
+      "presente": 101,
+      "total": 102,
+      "presentismo": 99.0
+    },
+    {
+      "nombre": "González, María Teresa Margarita",
+      "provincia": "Formosa",
+      "bloque": "Alianza Unión por la Patria",
+      "presente": 101,
+      "total": 102,
+      "presentismo": 99.0
+    },
+    {
+      "nombre": "López, Cándida Cristina",
+      "provincia": "Tierra del Fuego, Antártida e Islas del Atlántico Sur",
+      "bloque": "Alianza Frente de Todos",
+      "presente": 101,
+      "total": 102,
+      "presentismo": 99.0
+    },
+    {
+      "nombre": "Manzur, Juan Luis",
+      "provincia": "Tucumán",
+      "bloque": "Alianza Frente de Todos",
+      "presente": 101,
+      "total": 102,
+      "presentismo": 99.0
+    },
+    {
+      "nombre": "Rejal, Jesús Fernando",
+      "provincia": "La Rioja",
+      "bloque": "Alianza Unión por la Patria",
+      "presente": 101,
+      "total": 102,
+      "presentismo": 99.0
+    },
+    {
+      "nombre": "Salino, Fernando Aldo",
+      "provincia": "San Luis",
+      "bloque": "Alianza Unión por la Patria",
+      "presente": 101,
+      "total": 102,
+      "presentismo": 99.0
+    },
+    {
+      "nombre": "Espínola, Carlos Mauricio",
+      "provincia": "Corrientes",
+      "bloque": "Frente Todos",
+      "presente": 102,
+      "total": 102,
+      "presentismo": 100.0
+    },
+    {
+      "nombre": "Valenzuela, Mercedes Gabriela",
+      "provincia": "Corrientes",
+      "bloque": "Eco + Vamos Corrientes",
+      "presente": 102,
+      "total": 102,
+      "presentismo": 100.0
+    },
+    {
+      "nombre": "Vischi, Eduardo Alejandro",
+      "provincia": "Corrientes",
+      "bloque": "Eco + Vamos Corrientes",
+      "presente": 102,
+      "total": 102,
+      "presentismo": 100.0
+    }
+  ]
+}
