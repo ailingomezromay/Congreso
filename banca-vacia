@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Observatorio de Presentismo · Diputados de la Nación</title>
+<meta name="description" content="Cuántas veces asistió cada diputado a las votaciones nominales de la Cámara de Diputados. Datos oficiales, actualizados solos.">
+
+<!-- ====== TARJETA PARA REDES (Open Graph / Twitter) ======
+     IMPORTANTE: reemplazá la URL de abajo por la de tu sitio publicado, ej:
+     https://TU-USUARIO.github.io/TU-REPO/presentismo_diputados_2025.png -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="¿Quién falta? Presentismo en Diputados">
+<meta property="og:description" content="Ranking de asistencia de cada diputado a las votaciones. Datos oficiales, actualizados automáticamente.">
+<meta property="og:image" content="https://TU-USUARIO.github.io/TU-REPO/presentismo_diputados_2025.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="¿Quién falta? Presentismo en Diputados">
+<meta name="twitter:description" content="Ranking de asistencia de cada diputado a las votaciones nominales.">
+<meta name="twitter:image" content="https://TU-USUARIO.github.io/TU-REPO/presentismo_diputados_2025.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FAFAF7; --ink:#1A1A1A; --muted:#6B6B66; --line:#E3E2DC;
+    --accent:#DA2C38; --card:#FFFFFF;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"Inter",system-ui,sans-serif; line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:920px; margin:0 auto; padding:0 22px}
+  .mono{font-family:"Space Mono",monospace; font-variant-numeric:tabular-nums}
+
+  /* ---------- Encabezado ---------- */
+  header{padding:64px 0 34px; border-bottom:2px solid var(--ink)}
+  .eyebrow{
+    font-family:"Space Mono",monospace; font-size:12px; letter-spacing:.18em;
+    text-transform:uppercase; color:var(--muted); margin:0 0 18px;
+  }
+  h1{
+    font-family:"Space Grotesk",sans-serif; font-weight:700;
+    font-size:clamp(42px,9vw,86px); line-height:.98; letter-spacing:-.02em; margin:0;
+  }
+  h1 .em{color:var(--accent)}
+  .lede{font-size:clamp(17px,2.4vw,21px); color:#2c2c2a; max-width:60ch; margin:20px 0 0}
+  .stats{display:flex; flex-wrap:wrap; gap:26px; margin-top:30px}
+  .stat .n{font-family:"Space Grotesk",sans-serif; font-weight:600; font-size:30px; display:block; line-height:1}
+  .stat .l{font-family:"Space Mono",monospace; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted)}
+
+  /* ---------- Secciones ---------- */
+  section{padding:52px 0}
+  .kicker{
+    font-family:"Space Mono",monospace; font-size:12px; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--accent); margin:0 0 6px;
+  }
+  h2{font-family:"Space Grotesk",sans-serif; font-weight:600; font-size:clamp(24px,4vw,34px); letter-spacing:-.01em; margin:0 0 8px}
+  .sub{color:var(--muted); margin:0 0 26px; max-width:62ch}
+
+  /* ---------- Grilla de bancas (elemento firma) ---------- */
+  .seats{display:grid; grid-template-columns:repeat(auto-fill,minmax(16px,1fr)); gap:5px}
+  .seat{
+    aspect-ratio:1; border:1px solid rgba(26,26,26,.22); border-radius:2px;
+    background:var(--seatfill); cursor:default; transition:transform .1s ease;
+  }
+  .seat:hover{transform:scale(1.35); z-index:2; outline:1px solid var(--ink)}
+  .legend{display:flex; align-items:center; gap:12px; margin-top:20px; font-family:"Space Mono",monospace; font-size:12px; color:var(--muted)}
+  .legend .bar{height:12px; width:170px; border:1px solid var(--line);
+    background:linear-gradient(90deg, rgba(26,26,26,.10), rgba(26,26,26,1))}
+
+  /* ---------- Barras (los que más faltaron) ---------- */
+  .bars{display:flex; flex-direction:column; gap:12px}
+  .row{display:grid; grid-template-columns:230px 1fr; gap:14px; align-items:center}
+  .row .name{font-weight:500; font-size:15px}
+  .track{position:relative; background:#F0EFEA; border-radius:4px; height:26px; overflow:hidden}
+  .fill{position:absolute; inset:0 auto 0 0; background:var(--accent); border-radius:4px; width:0; transition:width .9s cubic-bezier(.2,.7,.2,1)}
+  .row .pct{position:absolute; right:10px; top:50%; transform:translateY(-50%); font-size:13px; font-weight:700; color:var(--ink)}
+
+  /* ---------- Tabla completa ---------- */
+  .tools{display:flex; gap:12px; margin-bottom:14px}
+  #buscar{flex:1; padding:11px 14px; border:1px solid var(--line); border-radius:8px;
+    font-family:"Inter",sans-serif; font-size:15px; background:var(--card)}
+  #buscar:focus{outline:2px solid var(--ink); outline-offset:1px}
+  table{width:100%; border-collapse:collapse; font-size:14px}
+  th,td{text-align:left; padding:11px 10px; border-bottom:1px solid var(--line)}
+  th{font-family:"Space Mono",monospace; font-size:11px; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--muted); cursor:pointer; user-select:none}
+  th:hover{color:var(--ink)}
+  td.num,th.num{text-align:right; font-family:"Space Mono",monospace; font-variant-numeric:tabular-nums}
+  tbody tr:hover{background:#F3F2ED}
+  .pill{display:inline-block; min-width:56px; text-align:center; padding:3px 8px; border-radius:20px;
+    font-family:"Space Mono",monospace; font-weight:700; font-size:13px}
+
+  /* ---------- Metodología / pie ---------- */
+  .note{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:24px 26px}
+  .note h3{font-family:"Space Grotesk",sans-serif; margin:0 0 10px; font-size:18px}
+  .note ul{margin:0; padding-left:18px; color:#333} .note li{margin:6px 0}
+  .links{display:flex; flex-wrap:wrap; gap:10px; margin-top:22px}
+  .btn{display:inline-block; padding:10px 16px; border:1px solid var(--ink); border-radius:8px;
+    text-decoration:none; color:var(--ink); font-weight:500; font-size:14px}
+  .btn.solid{background:var(--ink); color:var(--paper)}
+  footer{border-top:2px solid var(--ink); padding:26px 0 60px; color:var(--muted); font-size:13px}
+  a{color:var(--accent)}
+
+  .err{background:#FFF3F3; border:1px solid #F3C6C6; padding:16px 18px; border-radius:10px; color:#7a1f26}
+  .err code{background:#fff; padding:2px 6px; border-radius:4px}
+
+  @media (max-width:560px){
+    header{padding:44px 0 26px}
+    .row{grid-template-columns:130px 1fr; gap:8px}
+    .row .name{font-size:13px}
+    td.hide-sm,th.hide-sm{display:none}
+  }
+  @media (prefers-reduced-motion:reduce){ *{transition:none!important} }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <p class="eyebrow">Observatorio · Cámara de Diputados de la Nación</p>
+    <h1>¿Quién <span class="em">falta</span>?</h1>
+    <p class="lede">Cuántas veces estuvo presente cada diputado en las votaciones nominales del año. Datos oficiales, calculados a la vista y actualizados solos.</p>
+    <div class="stats">
+      <div class="stat"><span class="n mono" id="s-anio">—</span><span class="l">Año</span></div>
+      <div class="stat"><span class="n mono" id="s-vot">—</span><span class="l">Votaciones</span></div>
+      <div class="stat"><span class="n mono" id="s-dip">—</span><span class="l">Diputados</span></div>
+      <div class="stat"><span class="n mono" id="s-fecha">—</span><span class="l">Actualizado</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" id="app">
+  <!-- Grilla de bancas -->
+  <section>
+    <p class="kicker">El recinto</p>
+    <h2>Una banca por diputado</h2>
+    <p class="sub">Cada cuadrado es un diputado. Cuanto más lleno, más asistió; los pálidos son las bancas que más faltaron. Pasá el mouse para ver el nombre.</p>
+    <div class="seats" id="seats"></div>
+    <div class="legend"><span>Faltó mucho</span><span class="bar"></span><span>Estuvo siempre</span></div>
+  </section>
+
+  <!-- Barras -->
+  <section>
+    <p class="kicker">El dato</p>
+    <h2>Los 15 que más faltaron</h2>
+    <p class="sub">Ordenados por menor presentismo sobre el total de votaciones del año.</p>
+    <div class="bars" id="bars"></div>
+  </section>
+
+  <!-- Tabla -->
+  <section>
+    <p class="kicker">Todos</p>
+    <h2>Buscá a tu diputado</h2>
+    <p class="sub">Tocá los encabezados para ordenar. Escribí para filtrar.</p>
+    <div class="tools"><input id="buscar" type="search" placeholder="Buscar por apellido…" aria-label="Buscar diputado"></div>
+    <table>
+      <thead><tr>
+        <th class="num" data-k="rank">#</th>
+        <th data-k="diputado">Diputado</th>
+        <th class="num" data-k="presentismo_%">Presentismo</th>
+        <th class="num hide-sm" data-k="presentes">Presentes</th>
+        <th class="num hide-sm" data-k="ausentes">Ausentes</th>
+      </tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </section>
+
+  <!-- Metodología -->
+  <section>
+    <div class="note">
+      <h3>Cómo se calcula</h3>
+      <ul>
+        <li>Cada votación nominal registra si cada diputado estuvo <b>presente</b> (votó o presidió) o <b>ausente</b>.</li>
+        <li>Presentismo = presentes ÷ votaciones en las que figura × 100.</li>
+        <li>Entran al ranking solo quienes figuran en al menos la mitad de las votaciones del año, para no mezclar con quienes asumieron o cesaron a mitad de período.</li>
+        <li><b>No</b> mide comisiones ni el sentido del voto. Un número bajo puede tener causas justificadas.</li>
+      </ul>
+      <div class="links">
+        <a class="btn solid" id="csv" href="#" download>Descargar datos (CSV)</a>
+        <a class="btn" href="https://argentinadatos.com/" target="_blank" rel="noopener">Fuente: ArgentinaDatos</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap">
+  Datos de dominio público (HCDN vía ArgentinaDatos). Este sitio recopila y ordena información oficial.
+</div></footer>
+
+<script>
+/* ====== Datos ======
+   En el sitio publicado se bajan frescos de datos.json (lo actualiza el workflow).
+   Si abrís este archivo con doble clic, el navegador bloquea esa lectura,
+   así que usamos esta copia embebida como respaldo para que igual veas la página. */
+const DATOS_FALLBACK = {"anio": 2025, "actualizado": "2026-07-27", "total_votaciones": 213, "ranking": [{"diputado": "Gomez, Jose", "presentes": 42, "ausentes": 171, "votaciones": 213, "presentismo_%": 19.7}, {"diputado": "Aguirre, Manuel Ignacio", "presentes": 42, "ausentes": 152, "votaciones": 194, "presentismo_%": 21.6}, {"diputado": "Cipolini, Gerardo", "presentes": 80, "ausentes": 133, "votaciones": 213, "presentismo_%": 37.6}, {"diputado": "Domingo, Agustin", "presentes": 76, "ausentes": 118, "votaciones": 194, "presentismo_%": 39.2}, {"diputado": "Outes, Pablo", "presentes": 85, "ausentes": 128, "votaciones": 213, "presentismo_%": 39.9}, {"diputado": "Calletti, Pamela", "presentes": 86, "ausentes": 108, "votaciones": 194, "presentismo_%": 44.3}, {"diputado": "Lopez Murphy, Ricardo Hipolito", "presentes": 88, "ausentes": 106, "votaciones": 194, "presentismo_%": 45.4}, {"diputado": "Lospennato, Silvia", "presentes": 88, "ausentes": 106, "votaciones": 194, "presentismo_%": 45.4}, {"diputado": "Fernandez, Agustin", "presentes": 88, "ausentes": 106, "votaciones": 194, "presentismo_%": 45.4}, {"diputado": "Avila, Jorge Antonio", "presentes": 106, "ausentes": 107, "votaciones": 213, "presentismo_%": 49.8}, {"diputado": "Medina, Gladys", "presentes": 107, "ausentes": 106, "votaciones": 213, "presentismo_%": 50.2}, {"diputado": "Fernandez, Elia Marina", "presentes": 107, "ausentes": 106, "votaciones": 213, "presentismo_%": 50.2}, {"diputado": "Arjol, Martin", "presentes": 104, "ausentes": 90, "votaciones": 194, "presentismo_%": 53.6}, {"diputado": "Fernandez, Carlos Alberto", "presentes": 104, "ausentes": 90, "votaciones": 194, "presentismo_%": 53.6}, {"diputado": "Arrua, Alberto", "presentes": 115, "ausentes": 98, "votaciones": 213, "presentismo_%": 54.0}, {"diputado": "Randazzo, Florencio", "presentes": 106, "ausentes": 88, "votaciones": 194, "presentismo_%": 54.6}, {"diputado": "Ruiz, Yamila", "presentes": 117, "ausentes": 96, "votaciones": 213, "presentismo_%": 54.9}, {"diputado": "Antola, Marcela", "presentes": 108, "ausentes": 86, "votaciones": 194, "presentismo_%": 55.7}, {"diputado": "Laspina, Luciano Andres", "presentes": 110, "ausentes": 84, "votaciones": 194, "presentismo_%": 56.7}, {"diputado": "Vega, Yolanda", "presentes": 121, "ausentes": 92, "votaciones": 213, "presentismo_%": 56.8}, {"diputado": "Vancsik, Daniel", "presentes": 121, "ausentes": 92, "votaciones": 213, "presentismo_%": 56.8}, {"diputado": "Gonzalez, Alvaro", "presentes": 130, "ausentes": 83, "votaciones": 213, "presentismo_%": 61.0}, {"diputado": "Picat, Luis Albino", "presentes": 133, "ausentes": 80, "votaciones": 213, "presentismo_%": 62.4}, {"diputado": "Chumpitaz, Gabriel Felipe", "presentes": 122, "ausentes": 72, "votaciones": 194, "presentismo_%": 62.9}, {"diputado": "Campero, Mariano", "presentes": 135, "ausentes": 78, "votaciones": 213, "presentismo_%": 63.4}, {"diputado": "Zago, Oscar", "presentes": 136, "ausentes": 77, "votaciones": 213, "presentismo_%": 63.8}, {"diputado": "Morchio, Francisco", "presentes": 137, "ausentes": 76, "votaciones": 213, "presentismo_%": 64.3}, {"diputado": "Falcone, Eduardo", "presentes": 138, "ausentes": 75, "votaciones": 213, "presentismo_%": 64.8}, {"diputado": "Barletta, Mario", "presentes": 126, "ausentes": 68, "votaciones": 194, "presentismo_%": 64.9}, {"diputado": "Nuñez, Jose", "presentes": 139, "ausentes": 74, "votaciones": 213, "presentismo_%": 65.3}, {"diputado": "Bertoldi, Tanya", "presentes": 128, "ausentes": 66, "votaciones": 194, "presentismo_%": 66.0}, {"diputado": "Llancafilo, Osvaldo", "presentes": 128, "ausentes": 66, "votaciones": 194, "presentismo_%": 66.0}, {"diputado": "Pichetto, Miguel Angel", "presentes": 141, "ausentes": 72, "votaciones": 213, "presentismo_%": 66.2}, {"diputado": "Pagano, Marcela Marina", "presentes": 142, "ausentes": 71, "votaciones": 213, "presentismo_%": 66.7}, {"diputado": "Marziotta, Gisela", "presentes": 132, "ausentes": 62, "votaciones": 194, "presentismo_%": 68.0}, {"diputado": "Razzini, Veronica", "presentes": 145, "ausentes": 68, "votaciones": 213, "presentismo_%": 68.1}, {"diputado": "Baldassi, Hector W.", "presentes": 136, "ausentes": 58, "votaciones": 194, "presentismo_%": 70.1}, {"diputado": "Tetaz, Martin Alberto", "presentes": 136, "ausentes": 58, "votaciones": 194, "presentismo_%": 70.1}, {"diputado": "Polini, Juan Carlos", "presentes": 136, "ausentes": 58, "votaciones": 194, "presentismo_%": 70.1}, {"diputado": "Rizzotti, Jorge", "presentes": 150, "ausentes": 63, "votaciones": 213, "presentismo_%": 70.4}, {"diputado": "Romero, Ana Clara", "presentes": 138, "ausentes": 56, "votaciones": 194, "presentismo_%": 71.1}, {"diputado": "Capozzi, Sergio Eduardo", "presentes": 155, "ausentes": 58, "votaciones": 213, "presentismo_%": 72.8}, {"diputado": "Torres, Alejandra", "presentes": 156, "ausentes": 57, "votaciones": 213, "presentismo_%": 73.2}, {"diputado": "Bachey, Karina Ethel", "presentes": 142, "ausentes": 52, "votaciones": 194, "presentismo_%": 73.2}, {"diputado": "Gonzalez, Gerardo Gustavo", "presentes": 158, "ausentes": 55, "votaciones": 213, "presentismo_%": 74.2}, {"diputado": "Moreno, Maria de los Angeles", "presentes": 144, "ausentes": 50, "votaciones": 194, "presentismo_%": 74.2}, {"diputado": "Brambilla, Sofia", "presentes": 146, "ausentes": 48, "votaciones": 194, "presentismo_%": 75.3}, {"diputado": "Carrizo, Soledad", "presentes": 146, "ausentes": 48, "votaciones": 194, "presentismo_%": 75.3}, {"diputado": "Nieri, Lisandro", "presentes": 162, "ausentes": 51, "votaciones": 213, "presentismo_%": 76.1}, {"diputado": "Verasay, Pamela Fernanda", "presentes": 162, "ausentes": 51, "votaciones": 213, "presentismo_%": 76.1}, {"diputado": "Daives, Ricardo", "presentes": 162, "ausentes": 51, "votaciones": 213, "presentismo_%": 76.1}, {"diputado": "Quiroz, Marilu", "presentes": 148, "ausentes": 46, "votaciones": 194, "presentismo_%": 76.3}, {"diputado": "De la Sota, Natalia", "presentes": 163, "ausentes": 50, "votaciones": 213, "presentismo_%": 76.5}, {"diputado": "Bianchetti, Emmanuel", "presentes": 164, "ausentes": 49, "votaciones": 213, "presentismo_%": 77.0}, {"diputado": "Benedetti, Atilio", "presentes": 150, "ausentes": 44, "votaciones": 194, "presentismo_%": 77.3}, {"diputado": "Tournier, Jose Federico", "presentes": 165, "ausentes": 48, "votaciones": 213, "presentismo_%": 77.5}, {"diputado": "Bordet, Gustavo", "presentes": 165, "ausentes": 48, "votaciones": 213, "presentismo_%": 77.5}, {"diputado": "Garcia Aresca, Ignacio", "presentes": 166, "ausentes": 47, "votaciones": 213, "presentismo_%": 77.9}, {"diputado": "Vidal, Maria Eugenia", "presentes": 152, "ausentes": 42, "votaciones": 194, "presentismo_%": 78.4}, {"diputado": "Avila, Fernanda", "presentes": 169, "ausentes": 44, "votaciones": 213, "presentismo_%": 79.3}, {"diputado": "Stolbizer, Margarita", "presentes": 154, "ausentes": 40, "votaciones": 194, "presentismo_%": 79.4}, {"diputado": "Klipauka Lewtak, Florencia", "presentes": 154, "ausentes": 40, "votaciones": 194, "presentismo_%": 79.4}, {"diputado": "D'alessandro, Carlos", "presentes": 154, "ausentes": 40, "votaciones": 194, "presentismo_%": 79.4}, {"diputado": "Coli, Marcela", "presentes": 158, "ausentes": 36, "votaciones": 194, "presentismo_%": 81.4}, {"diputado": "Figueroa Casas, Germana", "presentes": 158, "ausentes": 36, "votaciones": 194, "presentismo_%": 81.4}, {"diputado": "Quetglas, Fabio Jose", "presentes": 158, "ausentes": 36, "votaciones": 194, "presentismo_%": 81.4}, {"diputado": "Kirchner, Maximo Carlos", "presentes": 175, "ausentes": 38, "votaciones": 213, "presentismo_%": 82.2}, {"diputado": "Gollan, Daniel", "presentes": 160, "ausentes": 34, "votaciones": 194, "presentismo_%": 82.5}, {"diputado": "Espert, Jose Luis", "presentes": 160, "ausentes": 34, "votaciones": 194, "presentismo_%": 82.5}, {"diputado": "Zabala Chacur, Natalia", "presentes": 160, "ausentes": 34, "votaciones": 194, "presentismo_%": 82.5}, {"diputado": "Besana, Gabriela", "presentes": 160, "ausentes": 34, "votaciones": 194, "presentismo_%": 82.5}, {"diputado": "Manes, Facundo", "presentes": 160, "ausentes": 34, "votaciones": 194, "presentismo_%": 82.5}, {"diputado": "Allende, Walberto", "presentes": 160, "ausentes": 34, "votaciones": 194, "presentismo_%": 82.5}, {"diputado": "Bermejo, Adolfo", "presentes": 160, "ausentes": 34, "votaciones": 194, "presentismo_%": 82.5}, {"diputado": "Coletta, Mariela", "presentes": 176, "ausentes": 37, "votaciones": 213, "presentismo_%": 82.6}, {"diputado": "Banfi, Karina", "presentes": 176, "ausentes": 37, "votaciones": 213, "presentismo_%": 82.6}, {"diputado": "Monzo, Emilio", "presentes": 162, "ausentes": 32, "votaciones": 194, "presentismo_%": 83.5}, {"diputado": "Milman, Gerardo", "presentes": 162, "ausentes": 32, "votaciones": 194, "presentismo_%": 83.5}, {"diputado": "Oliveto Lago, Paula", "presentes": 164, "ausentes": 30, "votaciones": 194, "presentismo_%": 84.5}, {"diputado": "Gutierrez, Carlos", "presentes": 180, "ausentes": 33, "votaciones": 213, "presentismo_%": 84.5}, {"diputado": "Mirabella, Roberto", "presentes": 164, "ausentes": 30, "votaciones": 194, "presentismo_%": 84.5}, {"diputado": "Gonzalez, Gustavo Carlos Miguel", "presentes": 164, "ausentes": 30, "votaciones": 194, "presentismo_%": 84.5}, {"diputado": "Campitelli, Celia", "presentes": 180, "ausentes": 33, "votaciones": 213, "presentismo_%": 84.5}, {"diputado": "Omodeo, Paula", "presentes": 164, "ausentes": 30, "votaciones": 194, "presentismo_%": 84.5}, {"diputado": "Ponce, Maria Celeste", "presentes": 181, "ausentes": 32, "votaciones": 213, "presentismo_%": 85.0}, {"diputado": "Frade, Monica", "presentes": 181, "ausentes": 32, "votaciones": 213, "presentismo_%": 85.0}, {"diputado": "Arancibia Rodriguez, Alberto Gustavo", "presentes": 166, "ausentes": 28, "votaciones": 194, "presentismo_%": 85.6}, {"diputado": "Bonacci, Rocio", "presentes": 183, "ausentes": 30, "votaciones": 213, "presentismo_%": 85.9}, {"diputado": "Avico, Belen", "presentes": 183, "ausentes": 30, "votaciones": 213, "presentismo_%": 85.9}, {"diputado": "Brugge, Juan Fernando", "presentes": 184, "ausentes": 29, "votaciones": 213, "presentismo_%": 86.4}, {"diputado": "Lopez Rodriguez, Dante", "presentes": 168, "ausentes": 26, "votaciones": 194, "presentismo_%": 86.6}, {"diputado": "Santoro, Leandro", "presentes": 168, "ausentes": 26, "votaciones": 194, "presentismo_%": 86.6}, {"diputado": "Lopez, Juan Manuel", "presentes": 168, "ausentes": 26, "votaciones": 194, "presentismo_%": 86.6}, {"diputado": "Reyes, Roxana", "presentes": 168, "ausentes": 26, "votaciones": 194, "presentismo_%": 86.6}, {"diputado": "Cobos, Julio", "presentes": 168, "ausentes": 26, "votaciones": 194, "presentismo_%": 86.6}, {"diputado": "Fein, Monica", "presentes": 168, "ausentes": 26, "votaciones": 194, "presentismo_%": 86.6}, {"diputado": "Leiva, Aldo", "presentes": 185, "ausentes": 28, "votaciones": 213, "presentismo_%": 86.9}, {"diputado": "De Loredo, Rodrigo", "presentes": 170, "ausentes": 24, "votaciones": 194, "presentismo_%": 87.6}, {"diputado": "Giorgi, Melina", "presentes": 170, "ausentes": 24, "votaciones": 194, "presentismo_%": 87.6}, {"diputado": "Ballejos, Nancy", "presentes": 170, "ausentes": 24, "votaciones": 194, "presentismo_%": 87.6}, {"diputado": "Ajmechet, Sabrina", "presentes": 187, "ausentes": 26, "votaciones": 213, "presentismo_%": 87.8}, {"diputado": "Ferreyra, Alida", "presentes": 188, "ausentes": 25, "votaciones": 213, "presentismo_%": 88.3}, {"diputado": "Carbajal, Fernando", "presentes": 172, "ausentes": 22, "votaciones": 194, "presentismo_%": 88.7}, {"diputado": "Santilli, Diego", "presentes": 172, "ausentes": 22, "votaciones": 194, "presentismo_%": 88.7}, {"diputado": "Cisneros, Carlos", "presentes": 189, "ausentes": 24, "votaciones": 213, "presentismo_%": 88.7}, {"diputado": "Snopek, Guillermo", "presentes": 190, "ausentes": 23, "votaciones": 213, "presentismo_%": 89.2}, {"diputado": "Fernandez Molero, Daiana", "presentes": 190, "ausentes": 23, "votaciones": 213, "presentismo_%": 89.2}, {"diputado": "Ritondo, Cristian A.", "presentes": 191, "ausentes": 22, "votaciones": 213, "presentismo_%": 89.7}, {"diputado": "Tavela, Danya", "presentes": 174, "ausentes": 20, "votaciones": 194, "presentismo_%": 89.7}, {"diputado": "Pedrini, Juan Manuel", "presentes": 174, "ausentes": 20, "votaciones": 194, "presentismo_%": 89.7}, {"diputado": "Monti, Francisco", "presentes": 174, "ausentes": 20, "votaciones": 194, "presentismo_%": 89.7}, {"diputado": "Campagnoli, Marcela", "presentes": 174, "ausentes": 20, "votaciones": 194, "presentismo_%": 89.7}, {"diputado": "Arrieta, Lourdes Micaela", "presentes": 192, "ausentes": 21, "votaciones": 213, "presentismo_%": 90.1}, {"diputado": "Tailhade, Rodolfo", "presentes": 192, "ausentes": 21, "votaciones": 213, "presentismo_%": 90.1}, {"diputado": "Carignano, Florencia", "presentes": 193, "ausentes": 20, "votaciones": 213, "presentismo_%": 90.6}, {"diputado": "Vasquez, Patricia", "presentes": 193, "ausentes": 20, "votaciones": 213, "presentismo_%": 90.6}, {"diputado": "Pokoik, Lorena", "presentes": 193, "ausentes": 20, "votaciones": 213, "presentismo_%": 90.6}, {"diputado": "Garrido, Jose Luis", "presentes": 193, "ausentes": 20, "votaciones": 213, "presentismo_%": 90.6}, {"diputado": "Pedrali, Gabriela", "presentes": 193, "ausentes": 20, "votaciones": 213, "presentismo_%": 90.6}, {"diputado": "Araujo, Maria Fernanda", "presentes": 176, "ausentes": 18, "votaciones": 194, "presentismo_%": 90.7}, {"diputado": "Brouwer de Koning, Gabriela", "presentes": 176, "ausentes": 18, "votaciones": 194, "presentismo_%": 90.7}, {"diputado": "Aveiro, Martin", "presentes": 194, "ausentes": 19, "votaciones": 213, "presentismo_%": 91.1}, {"diputado": "Villaverde, Lorena", "presentes": 195, "ausentes": 18, "votaciones": 213, "presentismo_%": 91.5}, {"diputado": "Bongiovanni, Alejandro", "presentes": 195, "ausentes": 18, "votaciones": 213, "presentismo_%": 91.5}, {"diputado": "Castagneto, Carlos Daniel", "presentes": 195, "ausentes": 18, "votaciones": 213, "presentismo_%": 91.5}, {"diputado": "Yeza, Martin", "presentes": 195, "ausentes": 18, "votaciones": 213, "presentismo_%": 91.5}, {"diputado": "Gaillard, Ana Carolina", "presentes": 178, "ausentes": 16, "votaciones": 194, "presentismo_%": 91.8}, {"diputado": "Carrizo, Ana Carla", "presentes": 178, "ausentes": 16, "votaciones": 194, "presentismo_%": 91.8}, {"diputado": "Sanchez, Roberto Antonio", "presentes": 178, "ausentes": 16, "votaciones": 194, "presentismo_%": 91.8}, {"diputado": "Sarapura, Natalia Silvina", "presentes": 178, "ausentes": 16, "votaciones": 194, "presentismo_%": 91.8}, {"diputado": "De Sensi, Maria Florencia", "presentes": 196, "ausentes": 17, "votaciones": 213, "presentismo_%": 92.0}, {"diputado": "Massot, Nicolas", "presentes": 196, "ausentes": 17, "votaciones": 213, "presentismo_%": 92.0}, {"diputado": "Finocchiaro, Alejandro", "presentes": 196, "ausentes": 17, "votaciones": 213, "presentismo_%": 92.0}, {"diputado": "Sanchez Wrba, Javier", "presentes": 165, "ausentes": 14, "votaciones": 179, "presentismo_%": 92.2}, {"diputado": "Arabia, Damian", "presentes": 197, "ausentes": 16, "votaciones": 213, "presentismo_%": 92.5}, {"diputado": "Iglesias, Fernando Adolfo", "presentes": 180, "ausentes": 14, "votaciones": 194, "presentismo_%": 92.8}, {"diputado": "Borrego, Victoria", "presentes": 180, "ausentes": 14, "votaciones": 194, "presentismo_%": 92.8}, {"diputado": "Sotolano, Maria", "presentes": 180, "ausentes": 14, "votaciones": 194, "presentismo_%": 92.8}, {"diputado": "Montenegro, Guillermo", "presentes": 198, "ausentes": 15, "votaciones": 213, "presentismo_%": 93.0}, {"diputado": "Paulon, Esteban", "presentes": 198, "ausentes": 15, "votaciones": 213, "presentismo_%": 93.0}, {"diputado": "Almiron, Lisandro", "presentes": 199, "ausentes": 14, "votaciones": 213, "presentismo_%": 93.4}, {"diputado": "Garcia, Carlos", "presentes": 199, "ausentes": 14, "votaciones": 213, "presentismo_%": 93.4}, {"diputado": "Diez, Romina", "presentes": 199, "ausentes": 14, "votaciones": 213, "presentismo_%": 93.4}, {"diputado": "Picon Martinez, Nancy Viviana", "presentes": 199, "ausentes": 14, "votaciones": 213, "presentismo_%": 93.4}, {"diputado": "Rauschenberger, Ariel", "presentes": 199, "ausentes": 14, "votaciones": 213, "presentismo_%": 93.4}, {"diputado": "Estrada, Emiliano", "presentes": 182, "ausentes": 12, "votaciones": 194, "presentismo_%": 93.8}, {"diputado": "Garramuño, Ricardo", "presentes": 182, "ausentes": 12, "votaciones": 194, "presentismo_%": 93.8}, {"diputado": "Piparo, Carolina", "presentes": 182, "ausentes": 12, "votaciones": 194, "presentismo_%": 93.8}, {"diputado": "Rodriguez Machado, Laura", "presentes": 182, "ausentes": 12, "votaciones": 194, "presentismo_%": 93.8}, {"diputado": "Cervi, Pablo", "presentes": 182, "ausentes": 12, "votaciones": 194, "presentismo_%": 93.8}, {"diputado": "Tortoriello, Anibal", "presentes": 200, "ausentes": 13, "votaciones": 213, "presentismo_%": 93.9}, {"diputado": "Llano, Mercedes", "presentes": 200, "ausentes": 13, "votaciones": 213, "presentismo_%": 93.9}, {"diputado": "Ardohain, Martin", "presentes": 200, "ausentes": 13, "votaciones": 213, "presentismo_%": 93.9}, {"diputado": "Juliano, Pablo", "presentes": 200, "ausentes": 13, "votaciones": 213, "presentismo_%": 93.9}, {"diputado": "Benegas Lynch, Bertie", "presentes": 201, "ausentes": 12, "votaciones": 213, "presentismo_%": 94.4}, {"diputado": "Huesen, Gerardo", "presentes": 201, "ausentes": 12, "votaciones": 213, "presentismo_%": 94.4}, {"diputado": "Emma, Nicolas", "presentes": 201, "ausentes": 12, "votaciones": 213, "presentismo_%": 94.4}, {"diputado": "Marquez, Nadia", "presentes": 184, "ausentes": 10, "votaciones": 194, "presentismo_%": 94.8}, {"diputado": "Agost Carreño, Oscar", "presentes": 184, "ausentes": 10, "votaciones": 194, "presentismo_%": 94.8}, {"diputado": "Martinez, Alvaro", "presentes": 202, "ausentes": 11, "votaciones": 213, "presentismo_%": 94.8}, {"diputado": "Chaher, Leila", "presentes": 184, "ausentes": 10, "votaciones": 194, "presentismo_%": 94.8}, {"diputado": "Moreau, Leopoldo", "presentes": 184, "ausentes": 10, "votaciones": 194, "presentismo_%": 94.8}, {"diputado": "Valdes, Eduardo Felix", "presentes": 203, "ausentes": 10, "votaciones": 213, "presentismo_%": 95.3}, {"diputado": "Santurio, Santiago", "presentes": 203, "ausentes": 10, "votaciones": 213, "presentismo_%": 95.3}, {"diputado": "Santillan Juarez Brahim, Juliana", "presentes": 203, "ausentes": 10, "votaciones": 213, "presentismo_%": 95.3}, {"diputado": "Giudici, Silvana", "presentes": 203, "ausentes": 10, "votaciones": 213, "presentismo_%": 95.3}, {"diputado": "Volnovich, Luana", "presentes": 203, "ausentes": 10, "votaciones": 213, "presentismo_%": 95.3}, {"diputado": "Macyszyn, Lorena", "presentes": 203, "ausentes": 10, "votaciones": 213, "presentismo_%": 95.3}, {"diputado": "Correa Llano, Facundo", "presentes": 203, "ausentes": 10, "votaciones": 213, "presentismo_%": 95.3}, {"diputado": "Ansaloni, Pablo", "presentes": 203, "ausentes": 10, "votaciones": 213, "presentismo_%": 95.3}, {"diputado": "Del Caño, Nicolas", "presentes": 108, "ausentes": 5, "votaciones": 113, "presentismo_%": 95.6}, {"diputado": "Moreno Ovalle, Julio", "presentes": 204, "ausentes": 9, "votaciones": 213, "presentismo_%": 95.8}, {"diputado": "Zapata, Carlos Raul", "presentes": 204, "ausentes": 9, "votaciones": 213, "presentismo_%": 95.8}, {"diputado": "Maquieyra, Martin", "presentes": 186, "ausentes": 8, "votaciones": 194, "presentismo_%": 95.9}, {"diputado": "Iparraguirre, Rogelio", "presentes": 186, "ausentes": 8, "votaciones": 194, "presentismo_%": 95.9}, {"diputado": "Pereyra, Julio", "presentes": 186, "ausentes": 8, "votaciones": 194, "presentismo_%": 95.9}, {"diputado": "Orozco, Emilia", "presentes": 186, "ausentes": 8, "votaciones": 194, "presentismo_%": 95.9}, {"diputado": "Ibañez, Maria Cecilia", "presentes": 205, "ausentes": 8, "votaciones": 213, "presentismo_%": 96.2}, {"diputado": "Lemoine, Lilia", "presentes": 205, "ausentes": 8, "votaciones": 213, "presentismo_%": 96.2}, {"diputado": "Quintar, Manuel", "presentes": 205, "ausentes": 8, "votaciones": 213, "presentismo_%": 96.2}, {"diputado": "Benedit, Beltran", "presentes": 205, "ausentes": 8, "votaciones": 213, "presentismo_%": 96.2}, {"diputado": "Pauli, Santiago", "presentes": 205, "ausentes": 8, "votaciones": 213, "presentismo_%": 96.2}, {"diputado": "Treffinger, Cesar", "presentes": 205, "ausentes": 8, "votaciones": 213, "presentismo_%": 96.2}, {"diputado": "Peluc, Jose", "presentes": 205, "ausentes": 8, "votaciones": 213, "presentismo_%": 96.2}, {"diputado": "Bornoroni, Gabriel", "presentes": 205, "ausentes": 8, "votaciones": 213, "presentismo_%": 96.2}, {"diputado": "Aguirre, Hilda", "presentes": 205, "ausentes": 8, "votaciones": 213, "presentismo_%": 96.2}, {"diputado": "Propato, Agustina Lucrecia", "presentes": 206, "ausentes": 7, "votaciones": 213, "presentismo_%": 96.7}, {"diputado": "Ginocchio, Silvana Micaela", "presentes": 188, "ausentes": 6, "votaciones": 194, "presentismo_%": 96.9}, {"diputado": "Osuna, Blanca Ines", "presentes": 207, "ausentes": 6, "votaciones": 213, "presentismo_%": 97.2}, {"diputado": "Ferraro, Maximiliano", "presentes": 207, "ausentes": 6, "votaciones": 213, "presentismo_%": 97.2}, {"diputado": "Yasky, Hugo", "presentes": 207, "ausentes": 6, "votaciones": 213, "presentismo_%": 97.2}, {"diputado": "Noblega, Sebastian", "presentes": 207, "ausentes": 6, "votaciones": 213, "presentismo_%": 97.2}, {"diputado": "Zaracho, Natalia", "presentes": 207, "ausentes": 6, "votaciones": 213, "presentismo_%": 97.2}, {"diputado": "Mayoraz, Nicolas", "presentes": 207, "ausentes": 6, "votaciones": 213, "presentismo_%": 97.2}, {"diputado": "Ali, Ernesto \"Pipi\"", "presentes": 207, "ausentes": 6, "votaciones": 213, "presentismo_%": 97.2}, {"diputado": "Acevedo, Sergio Edgardo", "presentes": 146, "ausentes": 4, "votaciones": 150, "presentismo_%": 97.3}, {"diputado": "Freites, Andrea", "presentes": 208, "ausentes": 5, "votaciones": 213, "presentismo_%": 97.7}, {"diputado": "Manrique, Mario", "presentes": 208, "ausentes": 5, "votaciones": 213, "presentismo_%": 97.7}, {"diputado": "Moyano, Nilda", "presentes": 190, "ausentes": 4, "votaciones": 194, "presentismo_%": 97.9}, {"diputado": "Toniolli, Eduardo", "presentes": 190, "ausentes": 4, "votaciones": 194, "presentismo_%": 97.9}, {"diputado": "Castillo, Christian", "presentes": 190, "ausentes": 4, "votaciones": 194, "presentismo_%": 97.9}, {"diputado": "Vilca, Alejandro", "presentes": 190, "ausentes": 4, "votaciones": 194, "presentismo_%": 97.9}, {"diputado": "Alianiello, Eugenia", "presentes": 190, "ausentes": 4, "votaciones": 194, "presentismo_%": 97.9}, {"diputado": "Penacca, Paula Andrea", "presentes": 209, "ausentes": 4, "votaciones": 213, "presentismo_%": 98.1}, {"diputado": "Monzon, Roxana", "presentes": 209, "ausentes": 4, "votaciones": 213, "presentismo_%": 98.1}, {"diputado": "Molle, Matias", "presentes": 209, "ausentes": 4, "votaciones": 213, "presentismo_%": 98.1}, {"diputado": "Moreau, Cecilia", "presentes": 209, "ausentes": 4, "votaciones": 213, "presentismo_%": 98.1}, {"diputado": "Gutierrez, Ramiro", "presentes": 209, "ausentes": 4, "votaciones": 213, "presentismo_%": 98.1}, {"diputado": "Hagman, Itai", "presentes": 209, "ausentes": 4, "votaciones": 213, "presentismo_%": 98.1}, {"diputado": "Fernandez Patri, Ramiro", "presentes": 192, "ausentes": 2, "votaciones": 194, "presentismo_%": 99.0}, {"diputado": "Passo, Marcela Fabiana", "presentes": 192, "ausentes": 2, "votaciones": 194, "presentismo_%": 99.0}, {"diputado": "Paponet, Liliana", "presentes": 192, "ausentes": 2, "votaciones": 194, "presentismo_%": 99.0}, {"diputado": "Soria, Martin", "presentes": 192, "ausentes": 2, "votaciones": 194, "presentismo_%": 99.0}, {"diputado": "Carro, Pablo", "presentes": 192, "ausentes": 2, "votaciones": 194, "presentismo_%": 99.0}, {"diputado": "Ledesma, Tomas", "presentes": 192, "ausentes": 2, "votaciones": 194, "presentismo_%": 99.0}, {"diputado": "Marin, Varinia Lis", "presentes": 211, "ausentes": 2, "votaciones": 213, "presentismo_%": 99.1}, {"diputado": "Zulli, Christian Alejandro", "presentes": 211, "ausentes": 2, "votaciones": 213, "presentismo_%": 99.1}, {"diputado": "Palazzo, Sergio Omar", "presentes": 211, "ausentes": 2, "votaciones": 213, "presentismo_%": 99.1}, {"diputado": "Tolosa Paz, Victoria", "presentes": 211, "ausentes": 2, "votaciones": 213, "presentismo_%": 99.1}, {"diputado": "Siley, Vanesa Raquel", "presentes": 211, "ausentes": 2, "votaciones": 213, "presentismo_%": 99.1}, {"diputado": "Parola, Maria Graciela", "presentes": 211, "ausentes": 2, "votaciones": 213, "presentismo_%": 99.1}, {"diputado": "Casas, Sergio Guillermo", "presentes": 211, "ausentes": 2, "votaciones": 213, "presentismo_%": 99.1}, {"diputado": "Yedlin, Pablo Raul", "presentes": 211, "ausentes": 2, "votaciones": 213, "presentismo_%": 99.1}, {"diputado": "Giuliano, Diego A.", "presentes": 211, "ausentes": 2, "votaciones": 213, "presentismo_%": 99.1}, {"diputado": "Herrera, Ricardo", "presentes": 194, "ausentes": 0, "votaciones": 194, "presentismo_%": 100.0}, {"diputado": "Mastaler, Magali", "presentes": 194, "ausentes": 0, "votaciones": 194, "presentismo_%": 100.0}, {"diputado": "Vargas Matyi, Brenda", "presentes": 194, "ausentes": 0, "votaciones": 194, "presentismo_%": 100.0}, {"diputado": "Romero, Jorge Antonio", "presentes": 194, "ausentes": 0, "votaciones": 194, "presentismo_%": 100.0}, {"diputado": "Litza, Monica", "presentes": 194, "ausentes": 0, "votaciones": 194, "presentismo_%": 100.0}, {"diputado": "Alonso, Constanza Maria", "presentes": 194, "ausentes": 0, "votaciones": 194, "presentismo_%": 100.0}, {"diputado": "Arroyo, Daniel", "presentes": 194, "ausentes": 0, "votaciones": 194, "presentismo_%": 100.0}, {"diputado": "Herrera, Bernardo Jose", "presentes": 194, "ausentes": 0, "votaciones": 194, "presentismo_%": 100.0}, {"diputado": "Sand, Nancy", "presentes": 213, "ausentes": 0, "votaciones": 213, "presentismo_%": 100.0}, {"diputado": "Montoto, Maria Luisa", "presentes": 194, "ausentes": 0, "votaciones": 194, "presentismo_%": 100.0}, {"diputado": "Martinez, German Pedro", "presentes": 213, "ausentes": 0, "votaciones": 213, "presentismo_%": 100.0}, {"diputado": "Marino, Juan", "presentes": 213, "ausentes": 0, "votaciones": 213, "presentismo_%": 100.0}, {"diputado": "Cafiero, Santiago", "presentes": 213, "ausentes": 0, "votaciones": 213, "presentismo_%": 100.0}, {"diputado": "Heller, Carlos", "presentes": 194, "ausentes": 0, "votaciones": 194, "presentismo_%": 100.0}, {"diputado": "Yutrovic, Carolina", "presentes": 194, "ausentes": 0, "votaciones": 194, "presentismo_%": 100.0}, {"diputado": "Macha, Monica", "presentes": 194, "ausentes": 0, "votaciones": 194, "presentismo_%": 100.0}, {"diputado": "Neder, Estela Mary", "presentes": 213, "ausentes": 0, "votaciones": 213, "presentismo_%": 100.0}, {"diputado": "Araujo Hernandez, Jorge Neri", "presentes": 213, "ausentes": 0, "votaciones": 213, "presentismo_%": 100.0}, {"diputado": "Potenza, Luciana", "presentes": 213, "ausentes": 0, "votaciones": 213, "presentismo_%": 100.0}, {"diputado": "Ianni, Ana Maria", "presentes": 213, "ausentes": 0, "votaciones": 213, "presentismo_%": 100.0}, {"diputado": "Aubone, Ana Fabiola", "presentes": 194, "ausentes": 0, "votaciones": 194, "presentismo_%": 100.0}, {"diputado": "Moran, Micaela", "presentes": 194, "ausentes": 0, "votaciones": 194, "presentismo_%": 100.0}, {"diputado": "Todero, Pablo", "presentes": 213, "ausentes": 0, "votaciones": 213, "presentismo_%": 100.0}, {"diputado": "Chomiak, Maria Luisa", "presentes": 194, "ausentes": 0, "votaciones": 194, "presentismo_%": 100.0}, {"diputado": "Glinski, Jose", "presentes": 213, "ausentes": 0, "votaciones": 213, "presentismo_%": 100.0}, {"diputado": "Strada, Julia", "presentes": 213, "ausentes": 0, "votaciones": 213, "presentismo_%": 100.0}, {"diputado": "Selva, Sabrina", "presentes": 213, "ausentes": 0, "votaciones": 213, "presentismo_%": 100.0}, {"diputado": "Chica, Jorge", "presentes": 213, "ausentes": 0, "votaciones": 213, "presentismo_%": 100.0}, {"diputado": "Basterra, Luis Eugenio", "presentes": 213, "ausentes": 0, "votaciones": 213, "presentismo_%": 100.0}, {"diputado": "Menem, Martin", "presentes": 213, "ausentes": 0, "votaciones": 213, "presentismo_%": 100.0}, {"diputado": "Estevez, Gabriela Beatriz", "presentes": 145, "ausentes": 0, "votaciones": 145, "presentismo_%": 100.0}, {"diputado": "Ripoll, Vilma", "presentes": 126, "ausentes": 0, "votaciones": 126, "presentismo_%": 100.0}]};
+
+const $ = s => document.querySelector(s);
+let RANKING = [];
+
+function pctColor(p){                       // color de la "pastilla" de la tabla
+  if(p >= 80) return {bg:'#E7F0E9', fg:'#1c5b30'};
+  if(p >= 60) return {bg:'#FBF3DF', fg:'#7a5b12'};
+  return {bg:'#FBE3E4', fg:'#8f1d26'};
+}
+function seatFill(p){                        // relleno de la banca (tinta según presencia)
+  const t = Math.max(0, Math.min(1, p/100));
+  return `rgba(26,26,26,${(0.10 + 0.90*t).toFixed(3)})`;
+}
+
+function pintarStats(d){
+  $('#s-anio').textContent = d.anio;
+  $('#s-vot').textContent  = d.total_votaciones;
+  $('#s-dip').textContent  = d.ranking.length;
+  const [a,m,dd] = d.actualizado.split('-');
+  $('#s-fecha').textContent = `${dd}/${m}`;
+  $('#csv').href = `presentismo_diputados_${d.anio}.csv`;
+}
+
+function pintarSeats(){
+  const cont = $('#seats');
+  // ordenadas de mayor a menor presencia: se ve el degradé de lleno a vacío
+  const ord = [...RANKING].sort((a,b)=> b['presentismo_%'] - a['presentismo_%']);
+  cont.innerHTML = ord.map(r=>{
+    const p = r['presentismo_%'];
+    return `<div class="seat" style="--seatfill:${seatFill(p)}" title="${r.diputado} — ${p}%"></div>`;
+  }).join('');
+}
+
+function pintarBars(){
+  const peores = [...RANKING].sort((a,b)=> a['presentismo_%'] - b['presentismo_%']).slice(0,15);
+  $('#bars').innerHTML = peores.map(r=>`
+    <div class="row">
+      <div class="name">${r.diputado}</div>
+      <div class="track"><div class="fill" data-w="${r['presentismo_%']}"></div><span class="pct mono">${r['presentismo_%']}%</span></div>
+    </div>`).join('');
+  // animar el ancho después de pintar
+  requestAnimationFrame(()=> document.querySelectorAll('.fill').forEach(f=> f.style.width = f.dataset.w + '%'));
+}
+
+let sortKey='presentismo_%', sortAsc=true, filtro='';
+function pintarTabla(){
+  let filas = RANKING.map((r,i)=>({...r, rank:i+1}));  // rank por presentismo ascendente
+  if(filtro) filas = filas.filter(r=> r.diputado.toLowerCase().includes(filtro));
+  filas.sort((a,b)=>{
+    const x=a[sortKey], y=b[sortKey];
+    const c = (typeof x==='string') ? x.localeCompare(y) : x-y;
+    return sortAsc ? c : -c;
+  });
+  $('#tbody').innerHTML = filas.map(r=>{
+    const c = pctColor(r['presentismo_%']);
+    return `<tr>
+      <td class="num">${r.rank}</td>
+      <td>${r.diputado}</td>
+      <td class="num"><span class="pill" style="background:${c.bg};color:${c.fg}">${r['presentismo_%']}%</span></td>
+      <td class="num hide-sm">${r.presentes}</td>
+      <td class="num hide-sm">${r.ausentes}</td>
+    </tr>`;
+  }).join('');
+}
+
+function initEventos(){
+  $('#buscar').addEventListener('input', e=>{ filtro = e.target.value.toLowerCase().trim(); pintarTabla(); });
+  document.querySelectorAll('th[data-k]').forEach(th=>{
+    th.addEventListener('click', ()=>{
+      const k = th.dataset.k;
+      if(k===sortKey) sortAsc = !sortAsc; else { sortKey = k; sortAsc = (k==='diputado'); }
+      pintarTabla();
+    });
+  });
+}
+
+function arrancar(d){
+  RANKING = d.ranking;
+  pintarStats(d); pintarSeats(); pintarBars(); pintarTabla(); initEventos();
+}
+
+// Intentamos datos frescos; si falla (doble clic), usamos el respaldo embebido.
+fetch('./datos.json')
+  .then(r=> r.ok ? r.json() : Promise.reject())
+  .then(arrancar)
+  .catch(()=> arrancar(DATOS_FALLBACK));
+</script>
+</body>
+</html>
