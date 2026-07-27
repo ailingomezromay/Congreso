@@ -4,17 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Banca Vacía · Observatorio del Congreso</title>
-<meta name="description" content="Cuántas veces asistió cada diputado a las votaciones, por bloque. Datos oficiales, actualizados solos.">
+<meta name="description" content="Cuántas veces asistió cada legislador a las votaciones, por bloque. Diputados y Senadores. Datos oficiales, actualizados solos.">
 
 <!-- Tarjeta para redes: reemplazá la URL por la de tu sitio si cambia -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="¿Quién falta? · Presentismo en Diputados">
-<meta property="og:description" content="Ranking de asistencia por diputado y por bloque. Datos oficiales.">
+<meta property="og:title" content="¿Quién falta? · Presentismo en el Congreso">
+<meta property="og:description" content="Ranking de asistencia por legislador y por bloque, en Diputados y Senadores. Datos oficiales.">
 <meta property="og:image" content="https://ailingomezromay.github.io/Congreso/presentismo_diputados_2025.png">
 <meta property="og:url" content="https://ailingomezromay.github.io/Congreso/">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="¿Quién falta? · Presentismo en Diputados">
-<meta name="twitter:description" content="Ranking de asistencia por diputado y por bloque.">
+<meta name="twitter:title" content="¿Quién falta? · Presentismo en el Congreso">
+<meta name="twitter:description" content="Ranking de asistencia por legislador y por bloque.">
 <meta name="twitter:image" content="https://ailingomezromay.github.io/Congreso/presentismo_diputados_2025.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -41,7 +41,6 @@
   .tab{font-family:"Space Mono",monospace; font-size:12px; letter-spacing:.04em; text-transform:uppercase;
     color:#B9BAC0; background:transparent; border:1px solid #33353D; padding:8px 14px; border-radius:999px; cursor:pointer}
   .tab.active{color:var(--bg); background:#F4F3EF; border-color:#F4F3EF; font-weight:700}
-  .tab.soon{opacity:.55; cursor:default}
   .tab .dot{color:var(--brand)}
 
   .hero h1{font-family:"Anton",sans-serif; font-weight:400; line-height:.9; letter-spacing:.005em;
@@ -94,8 +93,8 @@
 
   /* ---------- Tabla ---------- */
   .tools{margin-bottom:14px}
-  #buscar{width:100%; padding:12px 15px; border:1px solid var(--line); border-radius:9px; font-family:"Inter"; font-size:15px; background:var(--card)}
-  #buscar:focus{outline:2px solid var(--ink); outline-offset:1px}
+  .buscar{width:100%; padding:12px 15px; border:1px solid var(--line); border-radius:9px; font-family:"Inter"; font-size:15px; background:var(--card)}
+  .buscar:focus{outline:2px solid var(--ink); outline-offset:1px}
   table{width:100%; border-collapse:collapse; font-size:14px}
   th,td{text-align:left; padding:11px 10px; border-bottom:1px solid var(--line)}
   th{font-family:"Space Mono",monospace; font-size:11px; letter-spacing:.07em; text-transform:uppercase; color:var(--muted); cursor:pointer; user-select:none; white-space:nowrap}
@@ -116,12 +115,6 @@
   footer{background:var(--bg); color:#8A8C93; padding:30px 0; font-size:13px}
   a{color:var(--brand)}
 
-  /* Solapa Senadores (proximamente) */
-  .soon-panel{text-align:center; padding:80px 20px; border:2px dashed var(--line); border-radius:16px; background:var(--card)}
-  .soon-panel .big{font-family:"Anton"; font-size:clamp(34px,7vw,64px); text-transform:uppercase; color:var(--ink); margin:0}
-  .soon-panel p{color:var(--muted); max-width:48ch; margin:12px auto 0}
-  .badge{display:inline-block; font-family:"Space Mono",monospace; font-size:11px; letter-spacing:.15em; text-transform:uppercase; color:var(--brand); border:1px solid var(--brand); padding:5px 12px; border-radius:999px; margin-bottom:18px}
-
   .hidden{display:none}
   @media (max-width:600px){
     .row{grid-template-columns:130px 1fr} .row .name{font-size:13px}
@@ -140,15 +133,15 @@
       <div class="brand"><span class="sq"></span> Banca Vacía</div>
       <div class="tabs">
         <button class="tab active" data-tab="dip">Diputados</button>
-        <button class="tab soon" data-tab="sen">Senadores <span class="dot">·</span> pronto</button>
+        <button class="tab" data-tab="sen">Senadores</button>
       </div>
     </div>
-    <p class="kick">Observatorio del Congreso · Cámara de Diputados</p>
+    <p class="kick" id="kicker">Observatorio del Congreso · Cámara de Diputados</p>
     <h1>¿Quién <span class="q">falta</span>?</h1>
     <p class="headline" id="headline">Cargando…</p>
     <div class="metabar">
       <div><span class="n mono" id="m-vot">—</span><span class="l">Votaciones</span></div>
-      <div><span class="n mono" id="m-dip">—</span><span class="l">Diputados</span></div>
+      <div><span class="n mono" id="m-per">—</span><span class="l" id="m-label">Diputados</span></div>
       <div><span class="n mono" id="m-blo">—</span><span class="l">Bloques</span></div>
       <div><span class="n mono" id="m-fecha">—</span><span class="l">Actualizado</span></div>
     </div>
@@ -163,8 +156,8 @@
     <p class="kick2">El recinto</p>
     <h2>257 bancas, coloreadas por bloque</h2>
     <p class="sub">Cada cuadrado es un diputado, pintado con el color de su bloque. Cuanto más intenso, más asistió; los apagados son quienes más faltaron. Tocá un bloque para aislarlo.</p>
-    <div class="chips" id="chips"></div>
-    <div class="seats" id="seats"></div>
+    <div class="chips" id="chips-dip"></div>
+    <div class="seats" id="seats-dip"></div>
     <p class="gridnote">Intensidad = presentismo. <b>Pasá el mouse</b> sobre una banca para ver el nombre.</p>
   </section>
 
@@ -172,30 +165,30 @@
     <p class="kick2">El ranking que importa</p>
     <h2>¿Qué bloque falta más?</h2>
     <p class="sub">Presentismo promedio de cada bloque en las votaciones del año. Solo bloques con 3 o más diputados.</p>
-    <div class="bars" id="bloques"></div>
+    <div class="bars" id="bloques-dip"></div>
   </section>
 
   <section>
     <p class="kick2">Los 15 que más faltaron</p>
     <h2>Nombre por nombre</h2>
     <p class="sub">Ordenados por menor presentismo. La barra lleva el color de su bloque.</p>
-    <div class="bars" id="peores"></div>
+    <div class="bars" id="peores-dip"></div>
   </section>
 
   <section>
     <p class="kick2">La base completa</p>
     <h2>Buscá a tu diputado</h2>
     <p class="sub">Filtrá por bloque con los chips de arriba, buscá por apellido, y tocá los encabezados para ordenar.</p>
-    <div class="tools"><input id="buscar" type="search" placeholder="Buscar por apellido…" aria-label="Buscar diputado"></div>
+    <div class="tools"><input class="buscar" id="buscar-dip" type="search" placeholder="Buscar por apellido…" aria-label="Buscar diputado"></div>
     <table>
       <thead><tr>
         <th class="num" data-k="rank">#</th>
-        <th data-k="diputado">Diputado</th>
+        <th data-k="nombre">Diputado</th>
         <th class="hide-sm" data-k="bloque">Bloque</th>
         <th class="num" data-k="presentismo_%">Present.</th>
         <th class="num hide-sm" data-k="ausentes">Faltas</th>
       </tr></thead>
-      <tbody id="tbody"></tbody>
+      <tbody id="tbody-dip"></tbody>
     </table>
   </section>
 
@@ -209,7 +202,7 @@
         <li>El bloque se toma del registro oficial del diputado. <b>No</b> mide comisiones ni el sentido del voto.</li>
       </ul>
       <div class="links">
-        <a class="btn solid" id="csv" href="#" download>Descargar datos (CSV)</a>
+        <a class="btn solid" id="csv-dip" href="#" download>Descargar datos (CSV)</a>
         <a class="btn" href="https://argentinadatos.com/" target="_blank" rel="noopener">Fuente: ArgentinaDatos</a>
       </div>
     </div>
@@ -219,23 +212,76 @@
 
 <!-- ====================== SENADORES ====================== -->
 <div id="tab-sen" class="hidden">
-  <main class="wrap"><section>
-    <div class="soon-panel">
-      <span class="badge">Próximamente</span>
-      <p class="big">Senadores</p>
-      <p>El mismo observatorio para la Cámara de Senadores está en camino: presentismo por senador y por bloque, con los datos oficiales de las votaciones del Senado.</p>
+<main class="wrap">
+
+  <section>
+    <p class="kick2">El recinto</p>
+    <h2>72 bancas, coloreadas por bloque</h2>
+    <p class="sub">Cada cuadrado es un senador, pintado con el color de su bloque. Cuanto más intenso, más asistió; los apagados son quienes más faltaron. Tocá un bloque para aislarlo.</p>
+    <div class="chips" id="chips-sen"></div>
+    <div class="seats" id="seats-sen"></div>
+    <p class="gridnote">Intensidad = presentismo. <b>Pasá el mouse</b> sobre una banca para ver el nombre.</p>
+  </section>
+
+  <section>
+    <p class="kick2">El ranking que importa</p>
+    <h2>¿Qué bloque falta más?</h2>
+    <p class="sub">Presentismo promedio de cada bloque en las votaciones del Senado. Solo bloques con 2 o más senadores.</p>
+    <div class="bars" id="bloques-sen"></div>
+  </section>
+
+  <section>
+    <p class="kick2">Los 15 que más faltaron</p>
+    <h2>Nombre por nombre</h2>
+    <p class="sub">Ordenados por menor presentismo. La barra lleva el color de su bloque.</p>
+    <div class="bars" id="peores-sen"></div>
+  </section>
+
+  <section>
+    <p class="kick2">La base completa</p>
+    <h2>Buscá a tu senador</h2>
+    <p class="sub">Filtrá por bloque con los chips de arriba, buscá por apellido, y tocá los encabezados para ordenar.</p>
+    <div class="tools"><input class="buscar" id="buscar-sen" type="search" placeholder="Buscar por apellido…" aria-label="Buscar senador"></div>
+    <table>
+      <thead><tr>
+        <th class="num" data-k="rank">#</th>
+        <th data-k="nombre">Senador</th>
+        <th class="hide-sm" data-k="bloque">Bloque</th>
+        <th class="num" data-k="presentismo_%">Present.</th>
+        <th class="num hide-sm" data-k="ausentes">Faltas</th>
+      </tr></thead>
+      <tbody id="tbody-sen"></tbody>
+    </table>
+  </section>
+
+  <section>
+    <div class="note">
+      <h3>Cómo se calcula</h3>
+      <ul>
+        <li>Cada votación nominal del Senado registra si el senador estuvo <b>presente</b> (votó, se abstuvo o presidió) o <b>ausente</b>.</li>
+        <li>Presentismo = presentes ÷ votaciones en las que figura × 100.</li>
+        <li>Entran solo quienes figuran en al menos la mitad de las votaciones del año (mandato completo): 72 senadores.</li>
+        <li>El bloque se toma del partido por el que fue electo cada senador, según el registro oficial. <b>No</b> mide comisiones ni el sentido del voto.</li>
+      </ul>
+      <div class="links">
+        <a class="btn solid" id="csv-sen" href="#" download>Descargar datos (CSV)</a>
+        <a class="btn" href="https://argentinadatos.com/" target="_blank" rel="noopener">Fuente: ArgentinaDatos</a>
+      </div>
     </div>
-  </section></main>
+  </section>
+</main>
 </div>
 
-<footer><div class="wrap">Datos de dominio público (HCDN vía ArgentinaDatos). Banca Vacía recopila y ordena información oficial.</div></footer>
+<footer><div class="wrap">Datos de dominio público (Congreso de la Nación vía ArgentinaDatos). Banca Vacía recopila y ordena información oficial.</div></footer>
 
 <script>
 const DATOS_FALLBACK = {"anio": 2025, "actualizado": "2026-07-27", "total_votaciones": 213, "ranking": [{"diputado": "Gomez, Jose", "bloque": "Unión por la Patria", "provincia": "Santiago del Estero", "presentes": 42, "ausentes": 171, "votaciones": 213, "presentismo_%": 19.7}, {"diputado": "Aguirre, Manuel Ignacio", "bloque": "Democracia para Siempre", "provincia": "Corrientes", "presentes": 42, "ausentes": 152, "votaciones": 194, "presentismo_%": 21.6}, {"diputado": "Cipolini, Gerardo", "bloque": "Ucr - Unión Cívica Radical", "provincia": "Chaco", "presentes": 80, "ausentes": 133, "votaciones": 213, "presentismo_%": 37.6}, {"diputado": "Domingo, Agustin", "bloque": "Innovación Federal", "provincia": "Rio Negro", "presentes": 76, "ausentes": 118, "votaciones": 194, "presentismo_%": 39.2}, {"diputado": "Outes, Pablo", "bloque": "Innovación Federal", "provincia": "Salta", "presentes": 85, "ausentes": 128, "votaciones": 213, "presentismo_%": 39.9}, {"diputado": "Calletti, Pamela", "bloque": "Innovación Federal", "provincia": "Salta", "presentes": 86, "ausentes": 108, "votaciones": 194, "presentismo_%": 44.3}, {"diputado": "Lopez Murphy, Ricardo Hipolito", "bloque": "Republicanos Unidos", "provincia": "Ciudad de Buenos Aires", "presentes": 88, "ausentes": 106, "votaciones": 194, "presentismo_%": 45.4}, {"diputado": "Lospennato, Silvia", "bloque": "Pro", "provincia": "Buenos Aires", "presentes": 88, "ausentes": 106, "votaciones": 194, "presentismo_%": 45.4}, {"diputado": "Fernandez, Agustin", "bloque": "Independencia", "provincia": "Tucuman", "presentes": 88, "ausentes": 106, "votaciones": 194, "presentismo_%": 45.4}, {"diputado": "Avila, Jorge Antonio", "bloque": "Provincias Unidas", "provincia": "Chubut", "presentes": 106, "ausentes": 107, "votaciones": 213, "presentismo_%": 49.8}, {"diputado": "Medina, Gladys", "bloque": "Independencia", "provincia": "Tucuman", "presentes": 107, "ausentes": 106, "votaciones": 213, "presentismo_%": 50.2}, {"diputado": "Fernandez, Elia Marina", "bloque": "Independencia", "provincia": "Tucuman", "presentes": 107, "ausentes": 106, "votaciones": 213, "presentismo_%": 50.2}, {"diputado": "Arjol, Martin", "bloque": "Liga del Interior Eli", "provincia": "Misiones", "presentes": 104, "ausentes": 90, "votaciones": 194, "presentismo_%": 53.6}, {"diputado": "Fernandez, Carlos Alberto", "bloque": "Innovación Federal", "provincia": "Misiones", "presentes": 104, "ausentes": 90, "votaciones": 194, "presentismo_%": 53.6}, {"diputado": "Arrua, Alberto", "bloque": "Innovación Federal", "provincia": "Misiones", "presentes": 115, "ausentes": 98, "votaciones": 213, "presentismo_%": 54.0}, {"diputado": "Randazzo, Florencio", "bloque": "Encuentro Federal", "provincia": "Buenos Aires", "presentes": 106, "ausentes": 88, "votaciones": 194, "presentismo_%": 54.6}, {"diputado": "Ruiz, Yamila", "bloque": "Innovación Federal", "provincia": "Misiones", "presentes": 117, "ausentes": 96, "votaciones": 213, "presentismo_%": 54.9}, {"diputado": "Antola, Marcela", "bloque": "Democracia para Siempre", "provincia": "Entre Rios", "presentes": 108, "ausentes": 86, "votaciones": 194, "presentismo_%": 55.7}, {"diputado": "Laspina, Luciano Andres", "bloque": "Pro", "provincia": "Santa Fe", "presentes": 110, "ausentes": 84, "votaciones": 194, "presentismo_%": 56.7}, {"diputado": "Vega, Yolanda", "bloque": "Innovación Federal", "provincia": "Salta", "presentes": 121, "ausentes": 92, "votaciones": 213, "presentismo_%": 56.8}, {"diputado": "Vancsik, Daniel", "bloque": "Innovación Federal", "provincia": "Misiones", "presentes": 121, "ausentes": 92, "votaciones": 213, "presentismo_%": 56.8}, {"diputado": "Gonzalez, Alvaro", "bloque": "Pro", "provincia": "Ciudad de Buenos Aires", "presentes": 130, "ausentes": 83, "votaciones": 213, "presentismo_%": 61.0}, {"diputado": "Picat, Luis Albino", "bloque": "La Libertad Avanza", "provincia": "Cordoba", "presentes": 133, "ausentes": 80, "votaciones": 213, "presentismo_%": 62.4}, {"diputado": "Chumpitaz, Gabriel Felipe", "bloque": "Futuro y Libertad", "provincia": "Santa Fe", "presentes": 122, "ausentes": 72, "votaciones": 194, "presentismo_%": 62.9}, {"diputado": "Campero, Mariano", "bloque": "La Libertad Avanza", "provincia": "Tucuman", "presentes": 135, "ausentes": 78, "votaciones": 213, "presentismo_%": 63.4}, {"diputado": "Zago, Oscar", "bloque": "Mid - Movimiento de Integración y Desarrollo", "provincia": "Ciudad de Buenos Aires", "presentes": 136, "ausentes": 77, "votaciones": 213, "presentismo_%": 63.8}, {"diputado": "Morchio, Francisco", "bloque": "La Libertad Avanza", "provincia": "Entre Rios", "presentes": 137, "ausentes": 76, "votaciones": 213, "presentismo_%": 64.3}, {"diputado": "Falcone, Eduardo", "bloque": "Mid - Movimiento de Integración y Desarrollo", "provincia": "Buenos Aires", "presentes": 138, "ausentes": 75, "votaciones": 213, "presentismo_%": 64.8}, {"diputado": "Barletta, Mario", "bloque": "Unidos", "provincia": "Santa Fe", "presentes": 126, "ausentes": 68, "votaciones": 194, "presentismo_%": 64.9}, {"diputado": "Nuñez, Jose", "bloque": "Provincias Unidas", "provincia": "Santa Fe", "presentes": 139, "ausentes": 74, "votaciones": 213, "presentismo_%": 65.3}, {"diputado": "Bertoldi, Tanya", "bloque": "Unión por la Patria", "provincia": "Neuquen", "presentes": 128, "ausentes": 66, "votaciones": 194, "presentismo_%": 66.0}, {"diputado": "Llancafilo, Osvaldo", "bloque": "Movimiento Popular Neuquino", "provincia": "Neuquen", "presentes": 128, "ausentes": 66, "votaciones": 194, "presentismo_%": 66.0}, {"diputado": "Pichetto, Miguel Angel", "bloque": "Encuentro Federal", "provincia": "Buenos Aires", "presentes": 141, "ausentes": 72, "votaciones": 213, "presentismo_%": 66.2}, {"diputado": "Pagano, Marcela Marina", "bloque": "Coherencia", "provincia": "Buenos Aires", "presentes": 142, "ausentes": 71, "votaciones": 213, "presentismo_%": 66.7}, {"diputado": "Marziotta, Gisela", "bloque": "Unión por la Patria", "provincia": "Ciudad de Buenos Aires", "presentes": 132, "ausentes": 62, "votaciones": 194, "presentismo_%": 68.0}, {"diputado": "Razzini, Veronica", "bloque": "La Libertad Avanza", "provincia": "Santa Fe", "presentes": 145, "ausentes": 68, "votaciones": 213, "presentismo_%": 68.1}, {"diputado": "Baldassi, Hector W.", "bloque": "Pro", "provincia": "Cordoba", "presentes": 136, "ausentes": 58, "votaciones": 194, "presentismo_%": 70.1}, {"diputado": "Tetaz, Martin Alberto", "bloque": "Ucr - Unión Cívica Radical", "provincia": "Ciudad de Buenos Aires", "presentes": 136, "ausentes": 58, "votaciones": 194, "presentismo_%": 70.1}, {"diputado": "Polini, Juan Carlos", "bloque": "Democracia para Siempre", "provincia": "Chaco", "presentes": 136, "ausentes": 58, "votaciones": 194, "presentismo_%": 70.1}, {"diputado": "Rizzotti, Jorge", "bloque": "Provincias Unidas", "provincia": "Jujuy", "presentes": 150, "ausentes": 63, "votaciones": 213, "presentismo_%": 70.4}, {"diputado": "Romero, Ana Clara", "bloque": "Pro", "provincia": "Chubut", "presentes": 138, "ausentes": 56, "votaciones": 194, "presentismo_%": 71.1}, {"diputado": "Capozzi, Sergio Eduardo", "bloque": "Provincias Unidas", "provincia": "Rio Negro", "presentes": 155, "ausentes": 58, "votaciones": 213, "presentismo_%": 72.8}, {"diputado": "Torres, Alejandra", "bloque": "Provincias Unidas", "provincia": "Cordoba", "presentes": 156, "ausentes": 57, "votaciones": 213, "presentismo_%": 73.2}, {"diputado": "Bachey, Karina Ethel", "bloque": "Pro", "provincia": "San Luis", "presentes": 142, "ausentes": 52, "votaciones": 194, "presentismo_%": 73.2}, {"diputado": "Gonzalez, Gerardo Gustavo", "bloque": "Innovación Federal", "provincia": "Formosa", "presentes": 158, "ausentes": 55, "votaciones": 213, "presentismo_%": 74.2}, {"diputado": "Moreno, Maria de los Angeles", "bloque": "Produccion y Trabajo", "provincia": "San Juan", "presentes": 144, "ausentes": 50, "votaciones": 194, "presentismo_%": 74.2}, {"diputado": "Brambilla, Sofia", "bloque": "Pro", "provincia": "Corrientes", "presentes": 146, "ausentes": 48, "votaciones": 194, "presentismo_%": 75.3}, {"diputado": "Carrizo, Soledad", "bloque": "Ucr - Unión Cívica Radical", "provincia": "Cordoba", "presentes": 146, "ausentes": 48, "votaciones": 194, "presentismo_%": 75.3}, {"diputado": "Nieri, Lisandro", "bloque": "Ucr - Unión Cívica Radical", "provincia": "Mendoza", "presentes": 162, "ausentes": 51, "votaciones": 213, "presentismo_%": 76.1}, {"diputado": "Verasay, Pamela Fernanda", "bloque": "Ucr - Unión Cívica Radical", "provincia": "Mendoza", "presentes": 162, "ausentes": 51, "votaciones": 213, "presentismo_%": 76.1}, {"diputado": "Daives, Ricardo", "bloque": "Unión por la Patria", "provincia": "Santiago del Estero", "presentes": 162, "ausentes": 51, "votaciones": 213, "presentismo_%": 76.1}, {"diputado": "Quiroz, Marilu", "bloque": "Pro", "provincia": "Chaco", "presentes": 148, "ausentes": 46, "votaciones": 194, "presentismo_%": 76.3}, {"diputado": "De la Sota, Natalia", "bloque": "Defendamos Córdoba", "provincia": "Cordoba", "presentes": 163, "ausentes": 50, "votaciones": 213, "presentismo_%": 76.5}, {"diputado": "Bianchetti, Emmanuel", "bloque": "Pro", "provincia": "Misiones", "presentes": 164, "ausentes": 49, "votaciones": 213, "presentismo_%": 77.0}, {"diputado": "Benedetti, Atilio", "bloque": "Ucr - Unión Cívica Radical", "provincia": "Entre Rios", "presentes": 150, "ausentes": 44, "votaciones": 194, "presentismo_%": 77.3}, {"diputado": "Tournier, Jose Federico", "bloque": "La Libertad Avanza", "provincia": "Corrientes", "presentes": 165, "ausentes": 48, "votaciones": 213, "presentismo_%": 77.5}, {"diputado": "Bordet, Gustavo", "bloque": "Unión por la Patria", "provincia": "Entre Rios", "presentes": 165, "ausentes": 48, "votaciones": 213, "presentismo_%": 77.5}, {"diputado": "Garcia Aresca, Ignacio", "bloque": "Provincias Unidas", "provincia": "Cordoba", "presentes": 166, "ausentes": 47, "votaciones": 213, "presentismo_%": 77.9}, {"diputado": "Vidal, Maria Eugenia", "bloque": "Pro", "provincia": "Ciudad de Buenos Aires", "presentes": 152, "ausentes": 42, "votaciones": 194, "presentismo_%": 78.4}, {"diputado": "Avila, Fernanda", "bloque": "Elijo Catamarca", "provincia": "Catamarca", "presentes": 169, "ausentes": 44, "votaciones": 213, "presentismo_%": 79.3}, {"diputado": "Stolbizer, Margarita", "bloque": "Encuentro Federal", "provincia": "Buenos Aires", "presentes": 154, "ausentes": 40, "votaciones": 194, "presentismo_%": 79.4}, {"diputado": "Klipauka Lewtak, Florencia", "bloque": "La Libertad Avanza", "provincia": "Misiones", "presentes": 154, "ausentes": 40, "votaciones": 194, "presentismo_%": 79.4}, {"diputado": "D'alessandro, Carlos", "bloque": "Coherencia", "provincia": "San Luis", "presentes": 154, "ausentes": 40, "votaciones": 194, "presentismo_%": 79.4}, {"diputado": "Coli, Marcela", "bloque": "Democracia para Siempre", "provincia": "La Pampa", "presentes": 158, "ausentes": 36, "votaciones": 194, "presentismo_%": 81.4}, {"diputado": "Figueroa Casas, Germana", "bloque": "Pro", "provincia": "Santa Fe", "presentes": 158, "ausentes": 36, "votaciones": 194, "presentismo_%": 81.4}, {"diputado": "Quetglas, Fabio Jose", "bloque": "Ucr - Unión Cívica Radical", "provincia": "Buenos Aires", "presentes": 158, "ausentes": 36, "votaciones": 194, "presentismo_%": 81.4}, {"diputado": "Kirchner, Maximo Carlos", "bloque": "Unión por la Patria", "provincia": "Buenos Aires", "presentes": 175, "ausentes": 38, "votaciones": 213, "presentismo_%": 82.2}, {"diputado": "Gollan, Daniel", "bloque": "Unión por la Patria", "provincia": "Buenos Aires", "presentes": 160, "ausentes": 34, "votaciones": 194, "presentismo_%": 82.5}, {"diputado": "Espert, Jose Luis", "bloque": "La Libertad Avanza", "provincia": "Buenos Aires", "presentes": 160, "ausentes": 34, "votaciones": 194, "presentismo_%": 82.5}, {"diputado": "Zabala Chacur, Natalia", "bloque": "Unión por la Patria", "provincia": "San Luis", "presentes": 160, "ausentes": 34, "votaciones": 194, "presentismo_%": 82.5}, {"diputado": "Besana, Gabriela", "bloque": "Pro", "provincia": "Buenos Aires", "presentes": 160, "ausentes": 34, "votaciones": 194, "presentismo_%": 82.5}, {"diputado": "Manes, Facundo", "bloque": "Democracia para Siempre", "provincia": "Buenos Aires", "presentes": 160, "ausentes": 34, "votaciones": 194, "presentismo_%": 82.5}, {"diputado": "Allende, Walberto", "bloque": "Unión por la Patria", "provincia": "San Juan", "presentes": 160, "ausentes": 34, "votaciones": 194, "presentismo_%": 82.5}, {"diputado": "Bermejo, Adolfo", "bloque": "Unión por la Patria", "provincia": "Mendoza", "presentes": 160, "ausentes": 34, "votaciones": 194, "presentismo_%": 82.5}, {"diputado": "Coletta, Mariela", "bloque": "Provincias Unidas", "provincia": "Ciudad de Buenos Aires", "presentes": 176, "ausentes": 37, "votaciones": 213, "presentismo_%": 82.6}, {"diputado": "Banfi, Karina", "bloque": "Adelante Buenos Aires", "provincia": "Buenos Aires", "presentes": 176, "ausentes": 37, "votaciones": 213, "presentismo_%": 82.6}, {"diputado": "Monzo, Emilio", "bloque": "Encuentro Federal", "provincia": "Buenos Aires", "presentes": 162, "ausentes": 32, "votaciones": 194, "presentismo_%": 83.5}, {"diputado": "Milman, Gerardo", "bloque": "Pro", "provincia": "Buenos Aires", "presentes": 162, "ausentes": 32, "votaciones": 194, "presentismo_%": 83.5}, {"diputado": "Oliveto Lago, Paula", "bloque": "Coalicion Civica", "provincia": "Ciudad de Buenos Aires", "presentes": 164, "ausentes": 30, "votaciones": 194, "presentismo_%": 84.5}, {"diputado": "Gutierrez, Carlos", "bloque": "Provincias Unidas", "provincia": "Cordoba", "presentes": 180, "ausentes": 33, "votaciones": 213, "presentismo_%": 84.5}, {"diputado": "Mirabella, Roberto", "bloque": "Defendamos Santa Fe", "provincia": "Santa Fe", "presentes": 164, "ausentes": 30, "votaciones": 194, "presentismo_%": 84.5}, {"diputado": "Gonzalez, Gustavo Carlos Miguel", "bloque": "Unión por la Patria", "provincia": "Santa Cruz", "presentes": 164, "ausentes": 30, "votaciones": 194, "presentismo_%": 84.5}, {"diputado": "Campitelli, Celia", "bloque": "Unión por la Patria", "provincia": "Santiago del Estero", "presentes": 180, "ausentes": 33, "votaciones": 213, "presentismo_%": 84.5}, {"diputado": "Omodeo, Paula", "bloque": "Creo", "provincia": "Tucuman", "presentes": 164, "ausentes": 30, "votaciones": 194, "presentismo_%": 84.5}, {"diputado": "Ponce, Maria Celeste", "bloque": "La Libertad Avanza", "provincia": "Cordoba", "presentes": 181, "ausentes": 32, "votaciones": 213, "presentismo_%": 85.0}, {"diputado": "Frade, Monica", "bloque": "Coalicion Civica", "provincia": "Buenos Aires", "presentes": 181, "ausentes": 32, "votaciones": 213, "presentismo_%": 85.0}, {"diputado": "Arancibia Rodriguez, Alberto Gustavo", "bloque": "La Libertad Avanza", "provincia": "San Luis", "presentes": 166, "ausentes": 28, "votaciones": 194, "presentismo_%": 85.6}, {"diputado": "Bonacci, Rocio", "bloque": "La Libertad Avanza", "provincia": "Santa Fe", "presentes": 183, "ausentes": 30, "votaciones": 213, "presentismo_%": 85.9}, {"diputado": "Avico, Belen", "bloque": "La Libertad Avanza", "provincia": "Cordoba", "presentes": 183, "ausentes": 30, "votaciones": 213, "presentismo_%": 85.9}, {"diputado": "Brugge, Juan Fernando", "bloque": "Provincias Unidas", "provincia": "Cordoba", "presentes": 184, "ausentes": 29, "votaciones": 213, "presentismo_%": 86.4}, {"diputado": "Lopez Rodriguez, Dante", "bloque": "Unión por la Patria", "provincia": "Catamarca", "presentes": 168, "ausentes": 26, "votaciones": 194, "presentismo_%": 86.6}, {"diputado": "Santoro, Leandro", "bloque": "Unión por la Patria", "provincia": "Ciudad de Buenos Aires", "presentes": 168, "ausentes": 26, "votaciones": 194, "presentismo_%": 86.6}, {"diputado": "Lopez, Juan Manuel", "bloque": "Coalicion Civica", "provincia": "Buenos Aires", "presentes": 168, "ausentes": 26, "votaciones": 194, "presentismo_%": 86.6}, {"diputado": "Reyes, Roxana", "bloque": "Ucr - Unión Cívica Radical", "provincia": "Santa Cruz", "presentes": 168, "ausentes": 26, "votaciones": 194, "presentismo_%": 86.6}, {"diputado": "Cobos, Julio", "bloque": "Ucr - Unión Cívica Radical", "provincia": "Mendoza", "presentes": 168, "ausentes": 26, "votaciones": 194, "presentismo_%": 86.6}, {"diputado": "Fein, Monica", "bloque": "Encuentro Federal", "provincia": "Santa Fe", "presentes": 168, "ausentes": 26, "votaciones": 194, "presentismo_%": 86.6}, {"diputado": "Leiva, Aldo", "bloque": "Unión por la Patria", "provincia": "Chaco", "presentes": 185, "ausentes": 28, "votaciones": 213, "presentismo_%": 86.9}, {"diputado": "De Loredo, Rodrigo", "bloque": "Ucr - Unión Cívica Radical", "provincia": "Cordoba", "presentes": 170, "ausentes": 24, "votaciones": 194, "presentismo_%": 87.6}, {"diputado": "Giorgi, Melina", "bloque": "Democracia para Siempre", "provincia": "Santa Fe", "presentes": 170, "ausentes": 24, "votaciones": 194, "presentismo_%": 87.6}, {"diputado": "Ballejos, Nancy", "bloque": "Pro", "provincia": "Entre Rios", "presentes": 170, "ausentes": 24, "votaciones": 194, "presentismo_%": 87.6}, {"diputado": "Ajmechet, Sabrina", "bloque": "La Libertad Avanza", "provincia": "Ciudad de Buenos Aires", "presentes": 187, "ausentes": 26, "votaciones": 213, "presentismo_%": 87.8}, {"diputado": "Ferreyra, Alida", "bloque": "La Libertad Avanza", "provincia": "Ciudad de Buenos Aires", "presentes": 188, "ausentes": 25, "votaciones": 213, "presentismo_%": 88.3}, {"diputado": "Carbajal, Fernando", "bloque": "Democracia para Siempre", "provincia": "Formosa", "presentes": 172, "ausentes": 22, "votaciones": 194, "presentismo_%": 88.7}, {"diputado": "Santilli, Diego", "bloque": "Pro", "provincia": "Buenos Aires", "presentes": 172, "ausentes": 22, "votaciones": 194, "presentismo_%": 88.7}, {"diputado": "Cisneros, Carlos", "bloque": "Unión por la Patria", "provincia": "Tucuman", "presentes": 189, "ausentes": 24, "votaciones": 213, "presentismo_%": 88.7}, {"diputado": "Snopek, Guillermo", "bloque": "Unión por la Patria", "provincia": "Jujuy", "presentes": 190, "ausentes": 23, "votaciones": 213, "presentismo_%": 89.2}, {"diputado": "Fernandez Molero, Daiana", "bloque": "Pro", "provincia": "Ciudad de Buenos Aires", "presentes": 190, "ausentes": 23, "votaciones": 213, "presentismo_%": 89.2}, {"diputado": "Ritondo, Cristian A.", "bloque": "Pro", "provincia": "Buenos Aires", "presentes": 191, "ausentes": 22, "votaciones": 213, "presentismo_%": 89.7}, {"diputado": "Tavela, Danya", "bloque": "Democracia para Siempre", "provincia": "Buenos Aires", "presentes": 174, "ausentes": 20, "votaciones": 194, "presentismo_%": 89.7}, {"diputado": "Pedrini, Juan Manuel", "bloque": "Unión por la Patria", "provincia": "Chaco", "presentes": 174, "ausentes": 20, "votaciones": 194, "presentismo_%": 89.7}, {"diputado": "Monti, Francisco", "bloque": "Liga del Interior Eli", "provincia": "Catamarca", "presentes": 174, "ausentes": 20, "votaciones": 194, "presentismo_%": 89.7}, {"diputado": "Campagnoli, Marcela", "bloque": "Coalicion Civica", "provincia": "Buenos Aires", "presentes": 174, "ausentes": 20, "votaciones": 194, "presentismo_%": 89.7}, {"diputado": "Arrieta, Lourdes Micaela", "bloque": "Provincias Unidas", "provincia": "Mendoza", "presentes": 192, "ausentes": 21, "votaciones": 213, "presentismo_%": 90.1}, {"diputado": "Tailhade, Rodolfo", "bloque": "Unión por la Patria", "provincia": "Buenos Aires", "presentes": 192, "ausentes": 21, "votaciones": 213, "presentismo_%": 90.1}, {"diputado": "Carignano, Florencia", "bloque": "Unión por la Patria", "provincia": "Santa Fe", "presentes": 193, "ausentes": 20, "votaciones": 213, "presentismo_%": 90.6}, {"diputado": "Vasquez, Patricia", "bloque": "La Libertad Avanza", "provincia": "Buenos Aires", "presentes": 193, "ausentes": 20, "votaciones": 213, "presentismo_%": 90.6}, {"diputado": "Pokoik, Lorena", "bloque": "Unión por la Patria", "provincia": "Ciudad de Buenos Aires", "presentes": 193, "ausentes": 20, "votaciones": 213, "presentismo_%": 90.6}, {"diputado": "Garrido, Jose Luis", "bloque": "Por Santa Cruz", "provincia": "Santa Cruz", "presentes": 193, "ausentes": 20, "votaciones": 213, "presentismo_%": 90.6}, {"diputado": "Pedrali, Gabriela", "bloque": "Unión por la Patria", "provincia": "La Rioja", "presentes": 193, "ausentes": 20, "votaciones": 213, "presentismo_%": 90.6}, {"diputado": "Araujo, Maria Fernanda", "bloque": "La Libertad Avanza", "provincia": "Ciudad de Buenos Aires", "presentes": 176, "ausentes": 18, "votaciones": 194, "presentismo_%": 90.7}, {"diputado": "Brouwer de Koning, Gabriela", "bloque": "Ucr - Unión Cívica Radical", "provincia": "Cordoba", "presentes": 176, "ausentes": 18, "votaciones": 194, "presentismo_%": 90.7}, {"diputado": "Aveiro, Martin", "bloque": "Unión por la Patria", "provincia": "Mendoza", "presentes": 194, "ausentes": 19, "votaciones": 213, "presentismo_%": 91.1}, {"diputado": "Villaverde, Lorena", "bloque": "La Libertad Avanza", "provincia": "Rio Negro", "presentes": 195, "ausentes": 18, "votaciones": 213, "presentismo_%": 91.5}, {"diputado": "Bongiovanni, Alejandro", "bloque": "La Libertad Avanza", "provincia": "Santa Fe", "presentes": 195, "ausentes": 18, "votaciones": 213, "presentismo_%": 91.5}, {"diputado": "Castagneto, Carlos Daniel", "bloque": "Unión por la Patria", "provincia": "Buenos Aires", "presentes": 195, "ausentes": 18, "votaciones": 213, "presentismo_%": 91.5}, {"diputado": "Yeza, Martin", "bloque": "Pro", "provincia": "Buenos Aires", "presentes": 195, "ausentes": 18, "votaciones": 213, "presentismo_%": 91.5}, {"diputado": "Gaillard, Ana Carolina", "bloque": "Unión por la Patria", "provincia": "Entre Rios", "presentes": 178, "ausentes": 16, "votaciones": 194, "presentismo_%": 91.8}, {"diputado": "Carrizo, Ana Carla", "bloque": "Democracia para Siempre", "provincia": "Ciudad de Buenos Aires", "presentes": 178, "ausentes": 16, "votaciones": 194, "presentismo_%": 91.8}, {"diputado": "Sanchez, Roberto Antonio", "bloque": "Ucr - Unión Cívica Radical", "provincia": "Tucuman", "presentes": 178, "ausentes": 16, "votaciones": 194, "presentismo_%": 91.8}, {"diputado": "Sarapura, Natalia Silvina", "bloque": "Ucr - Unión Cívica Radical", "provincia": "Jujuy", "presentes": 178, "ausentes": 16, "votaciones": 194, "presentismo_%": 91.8}, {"diputado": "De Sensi, Maria Florencia", "bloque": "Pro", "provincia": "Buenos Aires", "presentes": 196, "ausentes": 17, "votaciones": 213, "presentismo_%": 92.0}, {"diputado": "Massot, Nicolas", "bloque": "Encuentro Federal", "provincia": "Buenos Aires", "presentes": 196, "ausentes": 17, "votaciones": 213, "presentismo_%": 92.0}, {"diputado": "Finocchiaro, Alejandro", "bloque": "Pro", "provincia": "Buenos Aires", "presentes": 196, "ausentes": 17, "votaciones": 213, "presentismo_%": 92.0}, {"diputado": "Sanchez Wrba, Javier", "bloque": "Pro", "provincia": "Buenos Aires", "presentes": 165, "ausentes": 14, "votaciones": 179, "presentismo_%": 92.2}, {"diputado": "Arabia, Damian", "bloque": "La Libertad Avanza", "provincia": "Ciudad de Buenos Aires", "presentes": 197, "ausentes": 16, "votaciones": 213, "presentismo_%": 92.5}, {"diputado": "Iglesias, Fernando Adolfo", "bloque": "Pro", "provincia": "Ciudad de Buenos Aires", "presentes": 180, "ausentes": 14, "votaciones": 194, "presentismo_%": 92.8}, {"diputado": "Borrego, Victoria", "bloque": "Coalicion Civica", "provincia": "Buenos Aires", "presentes": 180, "ausentes": 14, "votaciones": 194, "presentismo_%": 92.8}, {"diputado": "Sotolano, Maria", "bloque": "Pro", "provincia": "Buenos Aires", "presentes": 180, "ausentes": 14, "votaciones": 194, "presentismo_%": 92.8}, {"diputado": "Montenegro, Guillermo", "bloque": "La Libertad Avanza", "provincia": "Buenos Aires", "presentes": 198, "ausentes": 15, "votaciones": 213, "presentismo_%": 93.0}, {"diputado": "Paulon, Esteban", "bloque": "Provincias Unidas", "provincia": "Santa Fe", "presentes": 198, "ausentes": 15, "votaciones": 213, "presentismo_%": 93.0}, {"diputado": "Almiron, Lisandro", "bloque": "La Libertad Avanza", "provincia": "Corrientes", "presentes": 199, "ausentes": 14, "votaciones": 213, "presentismo_%": 93.4}, {"diputado": "Garcia, Carlos", "bloque": "La Libertad Avanza", "provincia": "Chaco", "presentes": 199, "ausentes": 14, "votaciones": 213, "presentismo_%": 93.4}, {"diputado": "Diez, Romina", "bloque": "La Libertad Avanza", "provincia": "Santa Fe", "presentes": 199, "ausentes": 14, "votaciones": 213, "presentismo_%": 93.4}, {"diputado": "Picon Martinez, Nancy Viviana", "bloque": "Produccion y Trabajo", "provincia": "San Juan", "presentes": 199, "ausentes": 14, "votaciones": 213, "presentismo_%": 93.4}, {"diputado": "Rauschenberger, Ariel", "bloque": "Unión por la Patria", "provincia": "La Pampa", "presentes": 199, "ausentes": 14, "votaciones": 213, "presentismo_%": 93.4}, {"diputado": "Estrada, Emiliano", "bloque": "Unión por la Patria", "provincia": "Salta", "presentes": 182, "ausentes": 12, "votaciones": 194, "presentismo_%": 93.8}, {"diputado": "Garramuño, Ricardo", "bloque": "Somos Fueguinos", "provincia": "Tierra del Fuego", "presentes": 182, "ausentes": 12, "votaciones": 194, "presentismo_%": 93.8}, {"diputado": "Piparo, Carolina", "bloque": "La Libertad Avanza", "provincia": "Buenos Aires", "presentes": 182, "ausentes": 12, "votaciones": 194, "presentismo_%": 93.8}, {"diputado": "Rodriguez Machado, Laura", "bloque": "La Libertad Avanza", "provincia": "Cordoba", "presentes": 182, "ausentes": 12, "votaciones": 194, "presentismo_%": 93.8}, {"diputado": "Cervi, Pablo", "bloque": "Liga del Interior Eli", "provincia": "Neuquen", "presentes": 182, "ausentes": 12, "votaciones": 194, "presentismo_%": 93.8}, {"diputado": "Tortoriello, Anibal", "bloque": "La Libertad Avanza", "provincia": "Rio Negro", "presentes": 200, "ausentes": 13, "votaciones": 213, "presentismo_%": 93.9}, {"diputado": "Llano, Mercedes", "bloque": "La Libertad Avanza", "provincia": "Mendoza", "presentes": 200, "ausentes": 13, "votaciones": 213, "presentismo_%": 93.9}, {"diputado": "Ardohain, Martin", "bloque": "Pro", "provincia": "La Pampa", "presentes": 200, "ausentes": 13, "votaciones": 213, "presentismo_%": 93.9}, {"diputado": "Juliano, Pablo", "bloque": "Provincias Unidas", "provincia": "Buenos Aires", "presentes": 200, "ausentes": 13, "votaciones": 213, "presentismo_%": 93.9}, {"diputado": "Benegas Lynch, Bertie", "bloque": "La Libertad Avanza", "provincia": "Buenos Aires", "presentes": 201, "ausentes": 12, "votaciones": 213, "presentismo_%": 94.4}, {"diputado": "Huesen, Gerardo", "bloque": "La Libertad Avanza", "provincia": "Tucuman", "presentes": 201, "ausentes": 12, "votaciones": 213, "presentismo_%": 94.4}, {"diputado": "Emma, Nicolas", "bloque": "La Libertad Avanza", "provincia": "Ciudad de Buenos Aires", "presentes": 201, "ausentes": 12, "votaciones": 213, "presentismo_%": 94.4}, {"diputado": "Marquez, Nadia", "bloque": "La Libertad Avanza", "provincia": "Neuquen", "presentes": 184, "ausentes": 10, "votaciones": 194, "presentismo_%": 94.8}, {"diputado": "Agost Carreño, Oscar", "bloque": "Encuentro Federal", "provincia": "Cordoba", "presentes": 184, "ausentes": 10, "votaciones": 194, "presentismo_%": 94.8}, {"diputado": "Martinez, Alvaro", "bloque": "La Libertad Avanza", "provincia": "Mendoza", "presentes": 202, "ausentes": 11, "votaciones": 213, "presentismo_%": 94.8}, {"diputado": "Chaher, Leila", "bloque": "Unión por la Patria", "provincia": "Jujuy", "presentes": 184, "ausentes": 10, "votaciones": 194, "presentismo_%": 94.8}, {"diputado": "Moreau, Leopoldo", "bloque": "Unión por la Patria", "provincia": "Buenos Aires", "presentes": 184, "ausentes": 10, "votaciones": 194, "presentismo_%": 94.8}, {"diputado": "Valdes, Eduardo Felix", "bloque": "Unión por la Patria", "provincia": "Ciudad de Buenos Aires", "presentes": 203, "ausentes": 10, "votaciones": 213, "presentismo_%": 95.3}, {"diputado": "Santurio, Santiago", "bloque": "La Libertad Avanza", "provincia": "Buenos Aires", "presentes": 203, "ausentes": 10, "votaciones": 213, "presentismo_%": 95.3}, {"diputado": "Santillan Juarez Brahim, Juliana", "bloque": "La Libertad Avanza", "provincia": "Buenos Aires", "presentes": 203, "ausentes": 10, "votaciones": 213, "presentismo_%": 95.3}, {"diputado": "Giudici, Silvana", "bloque": "La Libertad Avanza", "provincia": "Ciudad de Buenos Aires", "presentes": 203, "ausentes": 10, "votaciones": 213, "presentismo_%": 95.3}, {"diputado": "Volnovich, Luana", "bloque": "Unión por la Patria", "provincia": "Buenos Aires", "presentes": 203, "ausentes": 10, "votaciones": 213, "presentismo_%": 95.3}, {"diputado": "Macyszyn, Lorena", "bloque": "La Libertad Avanza", "provincia": "Buenos Aires", "presentes": 203, "ausentes": 10, "votaciones": 213, "presentismo_%": 95.3}, {"diputado": "Correa Llano, Facundo", "bloque": "La Libertad Avanza", "provincia": "Mendoza", "presentes": 203, "ausentes": 10, "votaciones": 213, "presentismo_%": 95.3}, {"diputado": "Ansaloni, Pablo", "bloque": "La Libertad Avanza", "provincia": "Buenos Aires", "presentes": 203, "ausentes": 10, "votaciones": 213, "presentismo_%": 95.3}, {"diputado": "Del Caño, Nicolas", "bloque": "Pts-Frente de Izquierda y de Trabajadores Unidad", "provincia": "Buenos Aires", "presentes": 108, "ausentes": 5, "votaciones": 113, "presentismo_%": 95.6}, {"diputado": "Moreno Ovalle, Julio", "bloque": "La Libertad Avanza", "provincia": "Salta", "presentes": 204, "ausentes": 9, "votaciones": 213, "presentismo_%": 95.8}, {"diputado": "Zapata, Carlos Raul", "bloque": "La Libertad Avanza", "provincia": "Salta", "presentes": 204, "ausentes": 9, "votaciones": 213, "presentismo_%": 95.8}, {"diputado": "Maquieyra, Martin", "bloque": "Pro", "provincia": "La Pampa", "presentes": 186, "ausentes": 8, "votaciones": 194, "presentismo_%": 95.9}, {"diputado": "Iparraguirre, Rogelio", "bloque": "Unión por la Patria", "provincia": "Buenos Aires", "presentes": 186, "ausentes": 8, "votaciones": 194, "presentismo_%": 95.9}, {"diputado": "Pereyra, Julio", "bloque": "Unión por la Patria", "provincia": "Buenos Aires", "presentes": 186, "ausentes": 8, "votaciones": 194, "presentismo_%": 95.9}, {"diputado": "Orozco, Emilia", "bloque": "La Libertad Avanza", "provincia": "Salta", "presentes": 186, "ausentes": 8, "votaciones": 194, "presentismo_%": 95.9}, {"diputado": "Ibañez, Maria Cecilia", "bloque": "La Libertad Avanza", "provincia": "Cordoba", "presentes": 205, "ausentes": 8, "votaciones": 213, "presentismo_%": 96.2}, {"diputado": "Lemoine, Lilia", "bloque": "La Libertad Avanza", "provincia": "Buenos Aires", "presentes": 205, "ausentes": 8, "votaciones": 213, "presentismo_%": 96.2}, {"diputado": "Quintar, Manuel", "bloque": "La Libertad Avanza", "provincia": "Jujuy", "presentes": 205, "ausentes": 8, "votaciones": 213, "presentismo_%": 96.2}, {"diputado": "Benedit, Beltran", "bloque": "La Libertad Avanza", "provincia": "Entre Rios", "presentes": 205, "ausentes": 8, "votaciones": 213, "presentismo_%": 96.2}, {"diputado": "Pauli, Santiago", "bloque": "La Libertad Avanza", "provincia": "Tierra del Fuego", "presentes": 205, "ausentes": 8, "votaciones": 213, "presentismo_%": 96.2}, {"diputado": "Treffinger, Cesar", "bloque": "La Libertad Avanza", "provincia": "Chubut", "presentes": 205, "ausentes": 8, "votaciones": 213, "presentismo_%": 96.2}, {"diputado": "Peluc, Jose", "bloque": "La Libertad Avanza", "provincia": "San Juan", "presentes": 205, "ausentes": 8, "votaciones": 213, "presentismo_%": 96.2}, {"diputado": "Bornoroni, Gabriel", "bloque": "La Libertad Avanza", "provincia": "Cordoba", "presentes": 205, "ausentes": 8, "votaciones": 213, "presentismo_%": 96.2}, {"diputado": "Aguirre, Hilda", "bloque": "Unión por la Patria", "provincia": "La Rioja", "presentes": 205, "ausentes": 8, "votaciones": 213, "presentismo_%": 96.2}, {"diputado": "Propato, Agustina Lucrecia", "bloque": "Unión por la Patria", "provincia": "Buenos Aires", "presentes": 206, "ausentes": 7, "votaciones": 213, "presentismo_%": 96.7}, {"diputado": "Ginocchio, Silvana Micaela", "bloque": "Unión por la Patria", "provincia": "Catamarca", "presentes": 188, "ausentes": 6, "votaciones": 194, "presentismo_%": 96.9}, {"diputado": "Osuna, Blanca Ines", "bloque": "Unión por la Patria", "provincia": "Entre Rios", "presentes": 207, "ausentes": 6, "votaciones": 213, "presentismo_%": 97.2}, {"diputado": "Ferraro, Maximiliano", "bloque": "Coalicion Civica", "provincia": "Ciudad de Buenos Aires", "presentes": 207, "ausentes": 6, "votaciones": 213, "presentismo_%": 97.2}, {"diputado": "Yasky, Hugo", "bloque": "Unión por la Patria", "provincia": "Buenos Aires", "presentes": 207, "ausentes": 6, "votaciones": 213, "presentismo_%": 97.2}, {"diputado": "Noblega, Sebastian", "bloque": "Elijo Catamarca", "provincia": "Catamarca", "presentes": 207, "ausentes": 6, "votaciones": 213, "presentismo_%": 97.2}, {"diputado": "Zaracho, Natalia", "bloque": "Unión por la Patria", "provincia": "Buenos Aires", "presentes": 207, "ausentes": 6, "votaciones": 213, "presentismo_%": 97.2}, {"diputado": "Mayoraz, Nicolas", "bloque": "La Libertad Avanza", "provincia": "Santa Fe", "presentes": 207, "ausentes": 6, "votaciones": 213, "presentismo_%": 97.2}, {"diputado": "Ali, Ernesto \"Pipi\"", "bloque": "Unión por la Patria", "provincia": "San Luis", "presentes": 207, "ausentes": 6, "votaciones": 213, "presentismo_%": 97.2}, {"diputado": "Acevedo, Sergio Edgardo", "bloque": "Por Santa Cruz", "provincia": "Santa Cruz", "presentes": 146, "ausentes": 4, "votaciones": 150, "presentismo_%": 97.3}, {"diputado": "Freites, Andrea", "bloque": "Unión por la Patria", "provincia": "Tierra del Fuego", "presentes": 208, "ausentes": 5, "votaciones": 213, "presentismo_%": 97.7}, {"diputado": "Manrique, Mario", "bloque": "Unión por la Patria", "provincia": "Buenos Aires", "presentes": 208, "ausentes": 5, "votaciones": 213, "presentismo_%": 97.7}, {"diputado": "Moyano, Nilda", "bloque": "Unión por la Patria", "provincia": "Santiago del Estero", "presentes": 190, "ausentes": 4, "votaciones": 194, "presentismo_%": 97.9}, {"diputado": "Toniolli, Eduardo", "bloque": "Unión por la Patria", "provincia": "Santa Fe", "presentes": 190, "ausentes": 4, "votaciones": 194, "presentismo_%": 97.9}, {"diputado": "Castillo, Christian", "bloque": "Pts-Frente de Izquierda Unidad", "provincia": "Buenos Aires", "presentes": 190, "ausentes": 4, "votaciones": 194, "presentismo_%": 97.9}, {"diputado": "Vilca, Alejandro", "bloque": "Pts-Frente de Izquierda Unidad", "provincia": "Jujuy", "presentes": 190, "ausentes": 4, "votaciones": 194, "presentismo_%": 97.9}, {"diputado": "Alianiello, Eugenia", "bloque": "Unión por la Patria", "provincia": "Chubut", "presentes": 190, "ausentes": 4, "votaciones": 194, "presentismo_%": 97.9}, {"diputado": "Penacca, Paula Andrea", "bloque": "Unión por la Patria", "provincia": "Ciudad de Buenos Aires", "presentes": 209, "ausentes": 4, "votaciones": 213, "presentismo_%": 98.1}, {"diputado": "Monzon, Roxana", "bloque": "Unión por la Patria", "provincia": "Buenos Aires", "presentes": 209, "ausentes": 4, "votaciones": 213, "presentismo_%": 98.1}, {"diputado": "Molle, Matias", "bloque": "Unión por la Patria", "provincia": "Buenos Aires", "presentes": 209, "ausentes": 4, "votaciones": 213, "presentismo_%": 98.1}, {"diputado": "Moreau, Cecilia", "bloque": "Unión por la Patria", "provincia": "Buenos Aires", "presentes": 209, "ausentes": 4, "votaciones": 213, "presentismo_%": 98.1}, {"diputado": "Gutierrez, Ramiro", "bloque": "Unión por la Patria", "provincia": "Buenos Aires", "presentes": 209, "ausentes": 4, "votaciones": 213, "presentismo_%": 98.1}, {"diputado": "Hagman, Itai", "bloque": "Unión por la Patria", "provincia": "Ciudad de Buenos Aires", "presentes": 209, "ausentes": 4, "votaciones": 213, "presentismo_%": 98.1}, {"diputado": "Fernandez Patri, Ramiro", "bloque": "Unión por la Patria", "provincia": "Formosa", "presentes": 192, "ausentes": 2, "votaciones": 194, "presentismo_%": 99.0}, {"diputado": "Passo, Marcela Fabiana", "bloque": "Unión por la Patria", "provincia": "Buenos Aires", "presentes": 192, "ausentes": 2, "votaciones": 194, "presentismo_%": 99.0}, {"diputado": "Paponet, Liliana", "bloque": "Unión por la Patria", "provincia": "Mendoza", "presentes": 192, "ausentes": 2, "votaciones": 194, "presentismo_%": 99.0}, {"diputado": "Soria, Martin", "bloque": "Unión por la Patria", "provincia": "Rio Negro", "presentes": 192, "ausentes": 2, "votaciones": 194, "presentismo_%": 99.0}, {"diputado": "Carro, Pablo", "bloque": "Unión por la Patria", "provincia": "Cordoba", "presentes": 192, "ausentes": 2, "votaciones": 194, "presentismo_%": 99.0}, {"diputado": "Ledesma, Tomas", "bloque": "Unión por la Patria", "provincia": "Entre Rios", "presentes": 192, "ausentes": 2, "votaciones": 194, "presentismo_%": 99.0}, {"diputado": "Marin, Varinia Lis", "bloque": "Unión por la Patria", "provincia": "La Pampa", "presentes": 211, "ausentes": 2, "votaciones": 213, "presentismo_%": 99.1}, {"diputado": "Zulli, Christian Alejandro", "bloque": "Unión por la Patria", "provincia": "Corrientes", "presentes": 211, "ausentes": 2, "votaciones": 213, "presentismo_%": 99.1}, {"diputado": "Palazzo, Sergio Omar", "bloque": "Unión por la Patria", "provincia": "Buenos Aires", "presentes": 211, "ausentes": 2, "votaciones": 213, "presentismo_%": 99.1}, {"diputado": "Tolosa Paz, Victoria", "bloque": "Unión por la Patria", "provincia": "Buenos Aires", "presentes": 211, "ausentes": 2, "votaciones": 213, "presentismo_%": 99.1}, {"diputado": "Siley, Vanesa Raquel", "bloque": "Unión por la Patria", "provincia": "Buenos Aires", "presentes": 211, "ausentes": 2, "votaciones": 213, "presentismo_%": 99.1}, {"diputado": "Parola, Maria Graciela", "bloque": "Unión por la Patria", "provincia": "Formosa", "presentes": 211, "ausentes": 2, "votaciones": 213, "presentismo_%": 99.1}, {"diputado": "Casas, Sergio Guillermo", "bloque": "Unión por la Patria", "provincia": "La Rioja", "presentes": 211, "ausentes": 2, "votaciones": 213, "presentismo_%": 99.1}, {"diputado": "Yedlin, Pablo Raul", "bloque": "Unión por la Patria", "provincia": "Tucuman", "presentes": 211, "ausentes": 2, "votaciones": 213, "presentismo_%": 99.1}, {"diputado": "Giuliano, Diego A.", "bloque": "Unión por la Patria", "provincia": "Santa Fe", "presentes": 211, "ausentes": 2, "votaciones": 213, "presentismo_%": 99.1}, {"diputado": "Herrera, Ricardo", "bloque": "Unión por la Patria", "provincia": "La Rioja", "presentes": 194, "ausentes": 0, "votaciones": 194, "presentismo_%": 100.0}, {"diputado": "Mastaler, Magali", "bloque": "Unión por la Patria", "provincia": "Santa Fe", "presentes": 194, "ausentes": 0, "votaciones": 194, "presentismo_%": 100.0}, {"diputado": "Vargas Matyi, Brenda", "bloque": "Unión por la Patria", "provincia": "Buenos Aires", "presentes": 194, "ausentes": 0, "votaciones": 194, "presentismo_%": 100.0}, {"diputado": "Romero, Jorge Antonio", "bloque": "Unión por la Patria", "provincia": "Corrientes", "presentes": 194, "ausentes": 0, "votaciones": 194, "presentismo_%": 100.0}, {"diputado": "Litza, Monica", "bloque": "Unión por la Patria", "provincia": "Buenos Aires", "presentes": 194, "ausentes": 0, "votaciones": 194, "presentismo_%": 100.0}, {"diputado": "Alonso, Constanza Maria", "bloque": "Unión por la Patria", "provincia": "Buenos Aires", "presentes": 194, "ausentes": 0, "votaciones": 194, "presentismo_%": 100.0}, {"diputado": "Arroyo, Daniel", "bloque": "Unión por la Patria", "provincia": "Buenos Aires", "presentes": 194, "ausentes": 0, "votaciones": 194, "presentismo_%": 100.0}, {"diputado": "Herrera, Bernardo Jose", "bloque": "Unión por la Patria", "provincia": "Santiago del Estero", "presentes": 194, "ausentes": 0, "votaciones": 194, "presentismo_%": 100.0}, {"diputado": "Sand, Nancy", "bloque": "Unión por la Patria", "provincia": "Corrientes", "presentes": 213, "ausentes": 0, "votaciones": 213, "presentismo_%": 100.0}, {"diputado": "Montoto, Maria Luisa", "bloque": "Unión por la Patria", "provincia": "Santiago del Estero", "presentes": 194, "ausentes": 0, "votaciones": 194, "presentismo_%": 100.0}, {"diputado": "Martinez, German Pedro", "bloque": "Unión por la Patria", "provincia": "Santa Fe", "presentes": 213, "ausentes": 0, "votaciones": 213, "presentismo_%": 100.0}, {"diputado": "Marino, Juan", "bloque": "Unión por la Patria", "provincia": "Buenos Aires", "presentes": 213, "ausentes": 0, "votaciones": 213, "presentismo_%": 100.0}, {"diputado": "Cafiero, Santiago", "bloque": "Unión por la Patria", "provincia": "Buenos Aires", "presentes": 213, "ausentes": 0, "votaciones": 213, "presentismo_%": 100.0}, {"diputado": "Heller, Carlos", "bloque": "Unión por la Patria", "provincia": "Ciudad de Buenos Aires", "presentes": 194, "ausentes": 0, "votaciones": 194, "presentismo_%": 100.0}, {"diputado": "Yutrovic, Carolina", "bloque": "Unión por la Patria", "provincia": "Tierra del Fuego", "presentes": 194, "ausentes": 0, "votaciones": 194, "presentismo_%": 100.0}, {"diputado": "Macha, Monica", "bloque": "Unión por la Patria", "provincia": "Buenos Aires", "presentes": 194, "ausentes": 0, "votaciones": 194, "presentismo_%": 100.0}, {"diputado": "Neder, Estela Mary", "bloque": "Unión por la Patria", "provincia": "Santiago del Estero", "presentes": 213, "ausentes": 0, "votaciones": 213, "presentismo_%": 100.0}, {"diputado": "Araujo Hernandez, Jorge Neri", "bloque": "Unión por la Patria", "provincia": "Tierra del Fuego", "presentes": 213, "ausentes": 0, "votaciones": 213, "presentismo_%": 100.0}, {"diputado": "Potenza, Luciana", "bloque": "Unión por la Patria", "provincia": "Buenos Aires", "presentes": 213, "ausentes": 0, "votaciones": 213, "presentismo_%": 100.0}, {"diputado": "Ianni, Ana Maria", "bloque": "Unión por la Patria", "provincia": "Santa Cruz", "presentes": 213, "ausentes": 0, "votaciones": 213, "presentismo_%": 100.0}, {"diputado": "Aubone, Ana Fabiola", "bloque": "Unión por la Patria", "provincia": "San Juan", "presentes": 194, "ausentes": 0, "votaciones": 194, "presentismo_%": 100.0}, {"diputado": "Moran, Micaela", "bloque": "Unión por la Patria", "provincia": "Buenos Aires", "presentes": 194, "ausentes": 0, "votaciones": 194, "presentismo_%": 100.0}, {"diputado": "Todero, Pablo", "bloque": "Unión por la Patria", "provincia": "Neuquen", "presentes": 213, "ausentes": 0, "votaciones": 213, "presentismo_%": 100.0}, {"diputado": "Chomiak, Maria Luisa", "bloque": "Unión por la Patria", "provincia": "Chaco", "presentes": 194, "ausentes": 0, "votaciones": 194, "presentismo_%": 100.0}, {"diputado": "Glinski, Jose", "bloque": "Unión por la Patria", "provincia": "Chubut", "presentes": 213, "ausentes": 0, "votaciones": 213, "presentismo_%": 100.0}, {"diputado": "Strada, Julia", "bloque": "Unión por la Patria", "provincia": "Buenos Aires", "presentes": 213, "ausentes": 0, "votaciones": 213, "presentismo_%": 100.0}, {"diputado": "Selva, Sabrina", "bloque": "Unión por la Patria", "provincia": "Buenos Aires", "presentes": 213, "ausentes": 0, "votaciones": 213, "presentismo_%": 100.0}, {"diputado": "Chica, Jorge", "bloque": "Unión por la Patria", "provincia": "San Juan", "presentes": 213, "ausentes": 0, "votaciones": 213, "presentismo_%": 100.0}, {"diputado": "Basterra, Luis Eugenio", "bloque": "Unión por la Patria", "provincia": "Formosa", "presentes": 213, "ausentes": 0, "votaciones": 213, "presentismo_%": 100.0}, {"diputado": "Menem, Martin", "bloque": "La Libertad Avanza", "provincia": "La Rioja", "presentes": 213, "ausentes": 0, "votaciones": 213, "presentismo_%": 100.0}, {"diputado": "Estevez, Gabriela Beatriz", "bloque": "Unión por la Patria", "provincia": "Cordoba", "presentes": 145, "ausentes": 0, "votaciones": 145, "presentismo_%": 100.0}, {"diputado": "Ripoll, Vilma", "bloque": "Mst - Frente de Izquierda y Trabajadores Unidad", "provincia": "Buenos Aires", "presentes": 126, "ausentes": 0, "votaciones": 126, "presentismo_%": 100.0}]};
+const SEN_FALLBACK   = {"anio": 2025, "actualizado": "2026-07-27", "total_votaciones": 102, "ranking": [{"nombre": "Suárez, Rodolfo Alejandro", "bloque": "Frente Cambia Mendoza", "provincia": "Mendoza", "presentes": 68, "ausentes": 34, "votaciones": 102, "presentismo_%": 66.7}, {"nombre": "Rodas, Antonio", "bloque": "Frente de Todos", "provincia": "Chaco", "presentes": 52, "ausentes": 25, "votaciones": 77, "presentismo_%": 67.5}, {"nombre": "Crexell, Carmen Lucila", "bloque": "Juntos por el Cambio", "provincia": "Neuquén", "presentes": 56, "ausentes": 21, "votaciones": 77, "presentismo_%": 72.7}, {"nombre": "Terenzi, Edith Elizabeth", "bloque": "Juntos por el Cambio Chubut", "provincia": "Chubut", "presentes": 78, "ausentes": 24, "votaciones": 102, "presentismo_%": 76.5}, {"nombre": "Romero, Juan Carlos", "bloque": "Juntos por el Cambio", "provincia": "Salta", "presentes": 59, "ausentes": 18, "votaciones": 77, "presentismo_%": 76.6}, {"nombre": "Zimmermann, Victor", "bloque": "Juntos por el Cambio", "provincia": "Chaco", "presentes": 59, "ausentes": 18, "votaciones": 77, "presentismo_%": 76.6}, {"nombre": "Juri, Mariana", "bloque": "Frente Cambia Mendoza", "provincia": "Mendoza", "presentes": 81, "ausentes": 21, "votaciones": 102, "presentismo_%": 79.4}, {"nombre": "Fama, Flavio Sergio", "bloque": "Juntos por el Cambio", "provincia": "Catamarca", "presentes": 83, "ausentes": 19, "votaciones": 102, "presentismo_%": 81.4}, {"nombre": "Juez, Luis Alfredo", "bloque": "Juntos por el Cambio", "provincia": "Córdoba", "presentes": 86, "ausentes": 16, "votaciones": 102, "presentismo_%": 84.3}, {"nombre": "Montenegro, Gerardo Antenor", "bloque": "Frente de Todos", "provincia": "Santiago del Estero", "presentes": 65, "ausentes": 12, "votaciones": 77, "presentismo_%": 84.4}, {"nombre": "Losada, Carolina", "bloque": "Juntos por el Cambio", "provincia": "Santa Fe", "presentes": 87, "ausentes": 15, "votaciones": 102, "presentismo_%": 85.3}, {"nombre": "De Angeli, Alfredo Luis", "bloque": "Juntos por el Cambio", "provincia": "Entre Ríos", "presentes": 66, "ausentes": 11, "votaciones": 77, "presentismo_%": 85.7}, {"nombre": "Mendoza, Sandra Mariela", "bloque": "Frente de Todos", "provincia": "Tucumán", "presentes": 88, "ausentes": 14, "votaciones": 102, "presentismo_%": 86.3}, {"nombre": "Bedia, Vilma Facunda", "bloque": "Partido Renovador Federal", "provincia": "Jujuy", "presentes": 89, "ausentes": 13, "votaciones": 102, "presentismo_%": 87.3}, {"nombre": "Goerling Lara, Enrique Martín", "bloque": "Juntos por el Cambio", "provincia": "Misiones", "presentes": 89, "ausentes": 13, "votaciones": 102, "presentismo_%": 87.3}, {"nombre": "Olivera Lucero, Bruno Antonio", "bloque": "Alianza la Libertad Avanza", "provincia": "San Juan", "presentes": 89, "ausentes": 13, "votaciones": 102, "presentismo_%": 87.3}, {"nombre": "Bensusán, Daniel Pablo", "bloque": "Frente de Todos", "provincia": "La Pampa", "presentes": 90, "ausentes": 12, "votaciones": 102, "presentismo_%": 88.2}, {"nombre": "Paoltroni, Francisco Manuel", "bloque": "Alianza la Libertad Avanza", "provincia": "Formosa", "presentes": 90, "ausentes": 12, "votaciones": 102, "presentismo_%": 88.2}, {"nombre": "Uñac, Sergio Mauricio", "bloque": "Alianza Unión por la Patria", "provincia": "San Juan", "presentes": 90, "ausentes": 12, "votaciones": 102, "presentismo_%": 88.2}, {"nombre": "Doñate, Claudio Martín", "bloque": "Frente de Todos", "provincia": "Río Negro", "presentes": 69, "ausentes": 8, "votaciones": 77, "presentismo_%": 89.6}, {"nombre": "Gimenez, Nora del Valle", "bloque": "Frente de Todos", "provincia": "Salta", "presentes": 69, "ausentes": 8, "votaciones": 77, "presentismo_%": 89.6}, {"nombre": "Ledesma, Claudia Alejandra", "bloque": "Frente Cívico por Santiago", "provincia": "Santiago del Estero", "presentes": 69, "ausentes": 8, "votaciones": 77, "presentismo_%": 89.6}, {"nombre": "Alvarez Rivero, Carmen Silvia", "bloque": "Juntos por el Cambio", "provincia": "Córdoba", "presentes": 92, "ausentes": 10, "votaciones": 102, "presentismo_%": 90.2}, {"nombre": "Arrascaeta, Ivanna Marcela", "bloque": "Alianza la Libertad Avanza", "provincia": "San Luis", "presentes": 92, "ausentes": 10, "votaciones": 102, "presentismo_%": 90.2}, {"nombre": "Atauche, Ezequiel", "bloque": "Partido Renovador Federal", "provincia": "Jujuy", "presentes": 92, "ausentes": 10, "votaciones": 102, "presentismo_%": 90.2}, {"nombre": "Blanco, Pablo Daniel", "bloque": "Juntos por el Cambio Tierra del Fuego", "provincia": "Tierra del Fuego, Antártida e Islas del Atlántico Sur", "presentes": 70, "ausentes": 7, "votaciones": 77, "presentismo_%": 90.9}, {"nombre": "Leavy, Sergio Napoleón", "bloque": "Frente de Todos", "provincia": "Salta", "presentes": 70, "ausentes": 7, "votaciones": 77, "presentismo_%": 90.9}, {"nombre": "Olalla de Moreira, Stella Maris", "bloque": "Juntos por el Cambio", "provincia": "Entre Ríos", "presentes": 70, "ausentes": 7, "votaciones": 77, "presentismo_%": 90.9}, {"nombre": "Abad, Maximiliano", "bloque": "Juntos por el Cambio", "provincia": "Buenos Aires", "presentes": 93, "ausentes": 9, "votaciones": 102, "presentismo_%": 91.2}, {"nombre": "Abdala, Bartolomé Esteban", "bloque": "Alianza la Libertad Avanza", "provincia": "San Luis", "presentes": 93, "ausentes": 9, "votaciones": 102, "presentismo_%": 91.2}, {"nombre": "Arce, Carlos Omar", "bloque": "Frente Renovador de la Concordia-Innovación Federal", "provincia": "Misiones", "presentes": 93, "ausentes": 9, "votaciones": 102, "presentismo_%": 91.2}, {"nombre": "Neder, José Emilio", "bloque": "Frente Fuerza Patria Peronista", "provincia": "Santiago del Estero", "presentes": 93, "ausentes": 9, "votaciones": 102, "presentismo_%": 91.2}, {"nombre": "Pagotto, Juan Carlos", "bloque": "Alianza la Libertad Avanza", "provincia": "La Rioja", "presentes": 93, "ausentes": 9, "votaciones": 102, "presentismo_%": 91.2}, {"nombre": "Vigo, Alejandra María", "bloque": "Hacemos por Córdoba", "provincia": "Córdoba", "presentes": 93, "ausentes": 9, "votaciones": 102, "presentismo_%": 91.2}, {"nombre": "Rojas Decut, Sonia Elizabeth", "bloque": "Frente Renovador de la Concordia-Innovación Federal", "provincia": "Misiones", "presentes": 94, "ausentes": 8, "votaciones": 102, "presentismo_%": 92.2}, {"nombre": "García Larraburu, Silvina Marcela", "bloque": "Frente de Todos", "provincia": "Río Negro", "presentes": 71, "ausentes": 6, "votaciones": 77, "presentismo_%": 92.2}, {"nombre": "Andrada, Guillermo Eduardo", "bloque": "Frente de Todos", "provincia": "Catamarca", "presentes": 95, "ausentes": 7, "votaciones": 102, "presentismo_%": 93.1}, {"nombre": "Fernández Sagasti, Anabel", "bloque": "Justicialista", "provincia": "Mendoza", "presentes": 95, "ausentes": 7, "votaciones": 102, "presentismo_%": 93.1}, {"nombre": "Galaretto, Eduardo Horacio", "bloque": "Juntos por el Cambio", "provincia": "Santa Fe", "presentes": 95, "ausentes": 7, "votaciones": 102, "presentismo_%": 93.1}, {"nombre": "Linares, Carlos Alberto", "bloque": "Frente de Todos", "provincia": "Chubut", "presentes": 95, "ausentes": 7, "votaciones": 102, "presentismo_%": 93.1}, {"nombre": "Ávila, Beatriz Luisa", "bloque": "Juntos por el Cambio", "provincia": "Tucumán", "presentes": 96, "ausentes": 6, "votaciones": 102, "presentismo_%": 94.1}, {"nombre": "De Pedro, Eduardo Enrique", "bloque": "Alianza Unión por la Patria", "provincia": "Buenos Aires", "presentes": 96, "ausentes": 6, "votaciones": 102, "presentismo_%": 94.1}, {"nombre": "Mayans, José Miguel Ángel", "bloque": "Alianza Unión por la Patria", "provincia": "Formosa", "presentes": 96, "ausentes": 6, "votaciones": 102, "presentismo_%": 94.1}, {"nombre": "Cora, Stefanía", "bloque": "Frente de Todos", "provincia": "Entre Ríos", "presentes": 73, "ausentes": 4, "votaciones": 77, "presentismo_%": 94.8}, {"nombre": "Duré, María Eugenia", "bloque": "Frente de Todos", "provincia": "Tierra del Fuego, Antártida e Islas del Atlántico Sur", "presentes": 73, "ausentes": 4, "votaciones": 77, "presentismo_%": 94.8}, {"nombre": "Pilatti Vergara, María Inés P. E.", "bloque": "Frente de Todos", "provincia": "Chaco", "presentes": 73, "ausentes": 4, "votaciones": 77, "presentismo_%": 94.8}, {"nombre": "Sapag, Silvia Estela", "bloque": "Frente de Todos", "provincia": "Neuquén", "presentes": 73, "ausentes": 4, "votaciones": 77, "presentismo_%": 94.8}, {"nombre": "Silva, Mónica Esther", "bloque": "Juntos Somos Río Negro", "provincia": "Río Negro", "presentes": 73, "ausentes": 4, "votaciones": 77, "presentismo_%": 94.8}, {"nombre": "Kroneberger, Daniel Ricardo", "bloque": "Juntos por el Cambio", "provincia": "La Pampa", "presentes": 97, "ausentes": 5, "votaciones": 102, "presentismo_%": 95.1}, {"nombre": "Moisés, María Carolina", "bloque": "Alianza Unión por la Patria", "provincia": "Jujuy", "presentes": 97, "ausentes": 5, "votaciones": 102, "presentismo_%": 95.1}, {"nombre": "Recalde, Mariano", "bloque": "Fuerza Patria", "provincia": "Ciudad Autónoma de Buenos Aires", "presentes": 97, "ausentes": 5, "votaciones": 102, "presentismo_%": 95.1}, {"nombre": "Carambia, José María", "bloque": "Alianza por Santa Cruz", "provincia": "Santa Cruz", "presentes": 98, "ausentes": 4, "votaciones": 102, "presentismo_%": 96.1}, {"nombre": "Corpacci, Lucia Benigna", "bloque": "Frente de Todos", "provincia": "Catamarca", "presentes": 98, "ausentes": 4, "votaciones": 102, "presentismo_%": 96.1}, {"nombre": "Lewandowski, Marcelo Néstor", "bloque": "Frente de Todos", "provincia": "Santa Fe", "presentes": 98, "ausentes": 4, "votaciones": 102, "presentismo_%": 96.1}, {"nombre": "López, María Florencia", "bloque": "Alianza Unión por la Patria", "provincia": "La Rioja", "presentes": 98, "ausentes": 4, "votaciones": 102, "presentismo_%": 96.1}, {"nombre": "Cristina, Andrea Marcela", "bloque": "Juntos por el Cambio Chubut", "provincia": "Chubut", "presentes": 99, "ausentes": 3, "votaciones": 102, "presentismo_%": 97.1}, {"nombre": "Giménez Navarro, María Celeste", "bloque": "Alianza Unión por la Patria", "provincia": "San Juan", "presentes": 99, "ausentes": 3, "votaciones": 102, "presentismo_%": 97.1}, {"nombre": "Kirchner, Alicia Margarita Antonia", "bloque": "Alianza Unión por la Patria", "provincia": "Santa Cruz", "presentes": 99, "ausentes": 3, "votaciones": 102, "presentismo_%": 97.1}, {"nombre": "Lousteau, Martín", "bloque": "Juntos por el Cambio", "provincia": "Ciudad Autónoma de Buenos Aires", "presentes": 75, "ausentes": 2, "votaciones": 77, "presentismo_%": 97.4}, {"nombre": "Parrilli, Oscar Isidro", "bloque": "Frente de Todos", "provincia": "Neuquén", "presentes": 75, "ausentes": 2, "votaciones": 77, "presentismo_%": 97.4}, {"nombre": "Huala, María Victória", "bloque": "Juntos por el Cambio", "provincia": "La Pampa", "presentes": 100, "ausentes": 2, "votaciones": 102, "presentismo_%": 98.0}, {"nombre": "Tagliaferri, Guadalupe", "bloque": "Juntos por el Cambio", "provincia": "Ciudad Autónoma de Buenos Aires", "presentes": 76, "ausentes": 1, "votaciones": 77, "presentismo_%": 98.7}, {"nombre": "Di Tullio, Juliana", "bloque": "Alianza Unión por la Patria", "provincia": "Buenos Aires", "presentes": 101, "ausentes": 1, "votaciones": 102, "presentismo_%": 99.0}, {"nombre": "Gadano, Natalia Elena", "bloque": "Alianza por Santa Cruz", "provincia": "Santa Cruz", "presentes": 101, "ausentes": 1, "votaciones": 102, "presentismo_%": 99.0}, {"nombre": "González, María Teresa Margarita", "bloque": "Alianza Unión por la Patria", "provincia": "Formosa", "presentes": 101, "ausentes": 1, "votaciones": 102, "presentismo_%": 99.0}, {"nombre": "López, Cándida Cristina", "bloque": "Alianza Frente de Todos", "provincia": "Tierra del Fuego, Antártida e Islas del Atlántico Sur", "presentes": 101, "ausentes": 1, "votaciones": 102, "presentismo_%": 99.0}, {"nombre": "Manzur, Juan Luis", "bloque": "Alianza Frente de Todos", "provincia": "Tucumán", "presentes": 101, "ausentes": 1, "votaciones": 102, "presentismo_%": 99.0}, {"nombre": "Rejal, Jesús Fernando", "bloque": "Alianza Unión por la Patria", "provincia": "La Rioja", "presentes": 101, "ausentes": 1, "votaciones": 102, "presentismo_%": 99.0}, {"nombre": "Salino, Fernando Aldo", "bloque": "Alianza Unión por la Patria", "provincia": "San Luis", "presentes": 101, "ausentes": 1, "votaciones": 102, "presentismo_%": 99.0}, {"nombre": "Espínola, Carlos Mauricio", "bloque": "Frente Todos", "provincia": "Corrientes", "presentes": 102, "ausentes": 0, "votaciones": 102, "presentismo_%": 100.0}, {"nombre": "Valenzuela, Mercedes Gabriela", "bloque": "Eco + Vamos Corrientes", "provincia": "Corrientes", "presentes": 102, "ausentes": 0, "votaciones": 102, "presentismo_%": 100.0}, {"nombre": "Vischi, Eduardo Alejandro", "bloque": "Eco + Vamos Corrientes", "provincia": "Corrientes", "presentes": 102, "ausentes": 0, "votaciones": 102, "presentismo_%": 100.0}]};
+
 const $ = s => document.querySelector(s);
 
-/* ---- Grupos de bloques + colores ---- */
-const GRUPOS = [
+/* ---- Familias de bloques + colores (una lista por cámara) ---- */
+const GRUPOS_DIP = [
   {t:/union por la patria|frente de todos|victoria/, n:'Unión por la Patria', c:'#2E86C1'},
   {t:/libertad avanza/,        n:'La Libertad Avanza', c:'#8E44AD'},
   {t:/\bpro\b/,                n:'PRO',               c:'#F1C40F'},
@@ -245,123 +291,162 @@ const GRUPOS = [
   {t:/innovacion federal/,     n:'Innovación Federal',c:'#16A085'},
   {t:/coalicion civica|civica/,n:'Coalición Cívica',  c:'#34495E'},
 ];
+const GRUPOS_SEN = [
+  {t:/union por la patria|frente de todos|frente todos|fuerza patria|justicialista|peronista/, n:'Unión por la Patria', c:'#2E86C1'},
+  {t:/juntos por el cambio|cambia mendoza/, n:'Juntos por el Cambio', c:'#F1C40F'},
+  {t:/libertad avanza/,        n:'La Libertad Avanza', c:'#8E44AD'},
+  {t:/innovacion federal|renovador/, n:'Innovación Federal', c:'#16A085'},
+];
 const OTROS = {n:'Otros bloques', c:'#95A5A6'};
-function grupoDe(b){
+
+function grupoDe(b, grupos){
   const s=(b||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
-  for(const g of GRUPOS){ if(g.t.test(s)) return g; }
+  for(const g of grupos){ if(g.t.test(s)) return g; }
   return OTROS;
 }
 function hexRgba(hex,a){const n=parseInt(hex.slice(1),16);return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`;}
-
-let RANKING=[], filtroGrupo=null, filtroTexto='', sortKey='presentismo_%', sortAsc=true;
-
-function pintarCabecera(d){
-  const gr = d.ranking.length;
-  const peor = d.ranking[0];
-  $('#headline').innerHTML = `El diputado más ausente faltó a <b>${peor.ausentes} de ${peor.votaciones}</b> votaciones. Acá está el registro completo, bloque por bloque.`;
-  $('#m-vot').textContent = d.total_votaciones;
-  $('#m-dip').textContent = d.ranking.length;
-  $('#m-blo').textContent = new Set(d.ranking.map(r=>grupoDe(r.bloque).n)).size;
-  const [a,m,dd]=d.actualizado.split('-'); $('#m-fecha').textContent=`${dd}/${m}`;
-  $('#csv').href = `presentismo_diputados_${d.anio}.csv`;
-}
-
-function pintarChips(){
-  const grupos={};
-  RANKING.forEach(r=>{const g=grupoDe(r.bloque); (grupos[g.n]=grupos[g.n]||{c:g.c,n:0}).n++;});
-  const orden=Object.entries(grupos).sort((a,b)=>b[1].n-a[1].n);
-  $('#chips').innerHTML =
-    `<span class="chip" data-g="__all"><span class="cdot" style="background:linear-gradient(45deg,#2E86C1,#8E44AD,#F1C40F)"></span>Todos</span>`+
-    orden.map(([n,o])=>`<span class="chip" data-g="${n}"><span class="cdot" style="background:${o.c}"></span>${n} <span class="cnt">${o.n}</span></span>`).join('');
-  $('#chips').querySelectorAll('.chip').forEach(ch=>ch.addEventListener('click',()=>{
-    const g=ch.dataset.g;
-    filtroGrupo = (g==='__all'||g===filtroGrupo) ? null : g;
-    aplicarFiltroChips(); pintarSeats(); pintarTabla();
-  }));
-  aplicarFiltroChips();
-}
-function aplicarFiltroChips(){
-  $('#chips').querySelectorAll('.chip').forEach(ch=>{
-    const g=ch.dataset.g;
-    const activo = !filtroGrupo || g===filtroGrupo || g==='__all';
-    ch.classList.toggle('off', !activo && g!=='__all');
-  });
-}
-
-function pintarSeats(){
-  const ord=[...RANKING].sort((a,b)=>b['presentismo_%']-a['presentismo_%']);
-  $('#seats').innerHTML = ord.map(r=>{
-    const g=grupoDe(r.bloque), p=r['presentismo_%'];
-    const alpha=(0.18+0.82*p/100);
-    const oculto = filtroGrupo && g.n!==filtroGrupo ? ' hide':'';
-    return `<div class="seat${oculto}" style="background:${hexRgba(g.c,alpha)}" title="${r.diputado} · ${g.n} · ${p}%"></div>`;
-  }).join('');
-}
-
-function pintarBloques(){
-  const agg={};
-  RANKING.forEach(r=>{const g=grupoDe(r.bloque);(agg[g.n]=agg[g.n]||{c:g.c,sum:0,n:0}).sum+=r['presentismo_%'];agg[g.n].n++;});
-  const filas=Object.entries(agg).filter(([,o])=>o.n>=3)
-    .map(([n,o])=>({n,c:o.c,prom:o.sum/o.n,cant:o.n})).sort((a,b)=>a.prom-b.prom);
-  $('#bloques').innerHTML = filas.map(f=>`
-    <div class="brow">
-      <div class="bn">${f.n}<small>${f.cant} diputados</small></div>
-      <div class="track"><div class="fill" data-w="${f.prom.toFixed(1)}" style="background:${f.c}"></div></div>
-      <div class="bv">${f.prom.toFixed(0)}%</div>
-    </div>`).join('');
-  animar();
-}
-
-function pintarPeores(){
-  const p=[...RANKING].sort((a,b)=>a['presentismo_%']-b['presentismo_%']).slice(0,15);
-  $('#peores').innerHTML = p.map(r=>{
-    const g=grupoDe(r.bloque);
-    return `<div class="row">
-      <div class="name">${r.diputado}<small>${g.n} · ${r.provincia||''}</small></div>
-      <div class="track"><div class="fill" data-w="${r['presentismo_%']}" style="background:${g.c}"></div><span class="pct">${r['presentismo_%']}%</span></div>
-    </div>`;}).join('');
-  animar();
-}
+function norm(s){return (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();}
+function pctPill(p){ if(p>=80)return{bg:'#E7F0E9',fg:'#1c5b30'}; if(p>=60)return{bg:'#FBF3DF',fg:'#7a5b12'}; return{bg:'#FBE3E4',fg:'#8f1d26'};}
 function animar(){requestAnimationFrame(()=>document.querySelectorAll('.fill').forEach(f=>f.style.width=f.dataset.w+'%'));}
 
-function pctPill(p){ if(p>=80)return{bg:'#E7F0E9',fg:'#1c5b30'}; if(p>=60)return{bg:'#FBF3DF',fg:'#7a5b12'}; return{bg:'#FBE3E4',fg:'#8f1d26'};}
-function pintarTabla(){
-  let filas=RANKING.map((r,i)=>({...r,rank:i+1}));
-  if(filtroGrupo) filas=filas.filter(r=>grupoDe(r.bloque).n===filtroGrupo);
-  if(filtroTexto) filas=filas.filter(r=>r.diputado.toLowerCase().includes(filtroTexto));
-  filas.sort((a,b)=>{const x=a[sortKey],y=b[sortKey];const c=(typeof x==='string')?x.localeCompare(y):x-y;return sortAsc?c:-c;});
-  $('#tbody').innerHTML = filas.map(r=>{
-    const g=grupoDe(r.bloque), c=pctPill(r['presentismo_%']);
-    return `<tr>
-      <td class="num">${r.rank}</td>
-      <td>${r.diputado}</td>
-      <td class="hide-sm"><span class="bdot" style="background:${g.c}"></span><span class="bloq">${r.bloque}</span></td>
-      <td class="num"><span class="pill" style="background:${c.bg};color:${c.fg}">${r['presentismo_%']}%</span></td>
-      <td class="num hide-sm">${r.ausentes}</td>
-    </tr>`;}).join('');
-}
+/* ---- Una "vista" (cámara) que se dibuja sola con su config ---- */
+function crearVista(cfg){
+  let RANKING=[], DATOS=null, filtroGrupo=null, filtroTexto='', sortKey='presentismo_%', sortAsc=true;
+  const el = id => document.getElementById(id);
+  const nodo = k => el(cfg.ids[k]);
+  const grupo = b => grupoDe(b, cfg.grupos);
+  const quien = r => r.nombre || r.diputado;
 
-function initEventos(){
-  $('#buscar').addEventListener('input',e=>{filtroTexto=e.target.value.toLowerCase().trim();pintarTabla();});
-  document.querySelectorAll('th[data-k]').forEach(th=>th.addEventListener('click',()=>{
-    const k=th.dataset.k; if(k===sortKey)sortAsc=!sortAsc; else {sortKey=k;sortAsc=(k==='diputado'||k==='bloque');} pintarTabla();
-  }));
-  document.querySelectorAll('.tab').forEach(t=>{
-    if(t.classList.contains('soon'))return;
-    t.addEventListener('click',()=>{
-      document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-      t.classList.add('active');
-      $('#tab-dip').classList.toggle('hidden', t.dataset.tab!=='dip');
-      $('#tab-sen').classList.toggle('hidden', t.dataset.tab!=='sen');
+  function cabecera(){
+    const d=DATOS, peor=RANKING[0];
+    el('kicker').textContent = cfg.kicker;
+    el('m-label').textContent = cfg.personasLabel;
+    $('#headline').innerHTML = `${cfg.persCap} más ausente faltó a <b>${peor.ausentes} de ${peor.votaciones}</b> votaciones. Acá está el registro completo, bloque por bloque.`;
+    $('#m-vot').textContent = d.total_votaciones;
+    $('#m-per').textContent = RANKING.length;
+    $('#m-blo').textContent = new Set(RANKING.map(r=>grupo(r.bloque).n)).size;
+    const p=d.actualizado.split('-'); $('#m-fecha').textContent=`${p[2]}/${p[1]}`;
+    const csv=nodo('csv'); if(csv) csv.href = cfg.csv(d.anio);
+  }
+
+  function chips(){
+    const gr={};
+    RANKING.forEach(r=>{const g=grupo(r.bloque);(gr[g.n]=gr[g.n]||{c:g.c,n:0}).n++;});
+    const orden=Object.entries(gr).sort((a,b)=>b[1].n-a[1].n);
+    nodo('chips').innerHTML =
+      `<span class="chip" data-g="__all"><span class="cdot" style="background:linear-gradient(45deg,#2E86C1,#8E44AD,#F1C40F)"></span>Todos</span>`+
+      orden.map(([n,o])=>`<span class="chip" data-g="${n}"><span class="cdot" style="background:${o.c}"></span>${n} <span class="cnt">${o.n}</span></span>`).join('');
+    nodo('chips').querySelectorAll('.chip').forEach(ch=>ch.addEventListener('click',()=>{
+      const g=ch.dataset.g;
+      filtroGrupo = (g==='__all'||g===filtroGrupo) ? null : g;
+      offChips(); seats(); tabla();
+    }));
+    offChips();
+  }
+  function offChips(){
+    nodo('chips').querySelectorAll('.chip').forEach(ch=>{
+      const g=ch.dataset.g, activo=!filtroGrupo||g===filtroGrupo||g==='__all';
+      ch.classList.toggle('off', !activo && g!=='__all');
     });
-  });
+  }
+  function seats(){
+    const ord=[...RANKING].sort((a,b)=>b['presentismo_%']-a['presentismo_%']);
+    nodo('seats').innerHTML = ord.map(r=>{
+      const g=grupo(r.bloque), p=r['presentismo_%'], alpha=(0.18+0.82*p/100);
+      const oculto = filtroGrupo && g.n!==filtroGrupo ? ' hide':'';
+      return `<div class="seat${oculto}" style="background:${hexRgba(g.c,alpha)}" title="${quien(r)} · ${g.n} · ${p}%"></div>`;
+    }).join('');
+  }
+  function bloques(){
+    const agg={};
+    RANKING.forEach(r=>{const g=grupo(r.bloque);(agg[g.n]=agg[g.n]||{c:g.c,sum:0,n:0}).sum+=r['presentismo_%'];agg[g.n].n++;});
+    const filas=Object.entries(agg).filter(([,o])=>o.n>=cfg.minBloque)
+      .map(([n,o])=>({n,c:o.c,prom:o.sum/o.n,cant:o.n})).sort((a,b)=>a.prom-b.prom);
+    nodo('bloques').innerHTML = filas.map(f=>`
+      <div class="brow">
+        <div class="bn">${f.n}<small>${f.cant} ${cfg.persLower}s</small></div>
+        <div class="track"><div class="fill" data-w="${f.prom.toFixed(1)}" style="background:${f.c}"></div></div>
+        <div class="bv">${f.prom.toFixed(0)}%</div>
+      </div>`).join('');
+    animar();
+  }
+  function peores(){
+    const p=[...RANKING].sort((a,b)=>a['presentismo_%']-b['presentismo_%']).slice(0,15);
+    nodo('peores').innerHTML = p.map(r=>{
+      const g=grupo(r.bloque);
+      return `<div class="row">
+        <div class="name">${quien(r)}<small>${g.n} · ${r.provincia||''}</small></div>
+        <div class="track"><div class="fill" data-w="${r['presentismo_%']}" style="background:${g.c}"></div><span class="pct">${r['presentismo_%']}%</span></div>
+      </div>`;}).join('');
+    animar();
+  }
+  function tabla(){
+    let filas=RANKING.map((r,i)=>({...r,rank:i+1}));
+    if(filtroGrupo) filas=filas.filter(r=>grupo(r.bloque).n===filtroGrupo);
+    if(filtroTexto) filas=filas.filter(r=>norm(quien(r)).includes(filtroTexto));
+    filas.sort((a,b)=>{
+      let x = sortKey==='nombre' ? quien(a) : a[sortKey];
+      let y = sortKey==='nombre' ? quien(b) : b[sortKey];
+      const c=(typeof x==='string')?x.localeCompare(y):x-y; return sortAsc?c:-c;
+    });
+    nodo('tbody').innerHTML = filas.map(r=>{
+      const g=grupo(r.bloque), col=pctPill(r['presentismo_%']);
+      return `<tr>
+        <td class="num">${r.rank}</td>
+        <td>${quien(r)}</td>
+        <td class="hide-sm"><span class="bdot" style="background:${g.c}"></span><span class="bloq">${r.bloque}</span></td>
+        <td class="num"><span class="pill" style="background:${col.bg};color:${col.fg}">${r['presentismo_%']}%</span></td>
+        <td class="num hide-sm">${r.ausentes}</td>
+      </tr>`;}).join('');
+  }
+  function eventos(){
+    nodo('buscar').addEventListener('input',e=>{filtroTexto=norm(e.target.value.trim());tabla();});
+    document.querySelectorAll(cfg.container+' th[data-k]').forEach(th=>th.addEventListener('click',()=>{
+      const k=th.dataset.k;
+      if(k===sortKey)sortAsc=!sortAsc; else {sortKey=k;sortAsc=(k==='nombre'||k==='bloque');}
+      tabla();
+    }));
+  }
+
+  return {
+    cargar(d){ DATOS=d; RANKING=d.ranking; chips(); seats(); bloques(); peores(); tabla(); eventos(); },
+    activar(){ if(DATOS) cabecera(); },
+    listo(){ return !!DATOS; }
+  };
 }
 
-function arrancar(d){
-  RANKING=d.ranking;
-  pintarCabecera(d); pintarChips(); pintarSeats(); pintarBloques(); pintarPeores(); pintarTabla(); initEventos();
-}
-fetch('./datos.json').then(r=>r.ok?r.json():Promise.reject()).then(arrancar).catch(()=>arrancar(DATOS_FALLBACK));
+const vistaDip = crearVista({
+  grupos: GRUPOS_DIP, container:'#tab-dip',
+  kicker:'Observatorio del Congreso · Cámara de Diputados',
+  personasLabel:'Diputados', persCap:'El diputado', persLower:'diputado', minBloque:3,
+  csv: a=>`presentismo_diputados_${a}.csv`,
+  ids:{chips:'chips-dip',seats:'seats-dip',bloques:'bloques-dip',peores:'peores-dip',tbody:'tbody-dip',buscar:'buscar-dip',csv:'csv-dip'},
+});
+const vistaSen = crearVista({
+  grupos: GRUPOS_SEN, container:'#tab-sen',
+  kicker:'Observatorio del Congreso · Cámara de Senadores',
+  personasLabel:'Senadores', persCap:'El senador', persLower:'senador', minBloque:2,
+  csv: a=>`presentismo_senadores_${a}.csv`,
+  ids:{chips:'chips-sen',seats:'seats-sen',bloques:'bloques-sen',peores:'peores-sen',tbody:'tbody-sen',buscar:'buscar-sen',csv:'csv-sen'},
+});
+
+/* ---- Solapas ---- */
+document.querySelectorAll('.tab').forEach(t=>{
+  t.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    const sen = t.dataset.tab==='sen';
+    $('#tab-dip').classList.toggle('hidden', sen);
+    $('#tab-sen').classList.toggle('hidden', !sen);
+    (sen?vistaSen:vistaDip).activar();
+  });
+});
+
+/* ---- Carga de datos (con respaldo offline) ---- */
+fetch('./datos.json').then(r=>r.ok?r.json():Promise.reject()).then(d=>{vistaDip.cargar(d);vistaDip.activar();})
+  .catch(()=>{vistaDip.cargar(DATOS_FALLBACK);vistaDip.activar();});
+fetch('./senadores.json').then(r=>r.ok?r.json():Promise.reject()).then(d=>vistaSen.cargar(d))
+  .catch(()=>vistaSen.cargar(SEN_FALLBACK));
 </script>
 </body>
 </html>
