@@ -4,6 +4,13 @@ Ranking del presentismo de cada diputado/a de la Nación en las **votaciones nom
 
 ![Ranking de presentismo](presentismo_diputados_2025.png)
 
+## Novedades en el sitio (`index.html`)
+
+- **Mapa de las ausencias**: un cartograma con las 24 provincias, coloreado por el presentismo promedio de sus legisladores (rojo = falta más, verde = falta menos). Se puede tocar una provincia para filtrar la tabla, y viene acompañado de un ranking provincial. Funciona en Diputados y Senadores usando el campo `provincia` que ya traen los datos.
+- **Ficha compartible**: al tocar a cualquier legislador (en la tabla, en el ranking o en una banca del recinto) se abre una tarjeta con su presentismo, lista para **descargar como imagen** o **compartir** (Web Share API en celulares). Cada ficha tiene su propio link (`#/dip/Apellido,+Nombre`) que abre esa tarjeta directamente al entrar.
+
+> Nota técnica: el sitio es 100% estático (sin librerías externas). La imagen de la ficha se genera con `<canvas>` en el navegador. El `index.html` normaliza automáticamente `senadores.json` aunque venga con la forma `{ senadores: [...] }`.
+
 ## Qué mide
 
 Cuántas veces cada diputado/a estuvo **presente** en las votaciones nominales del año, sobre el total de votaciones en las que le tocaba estar.
