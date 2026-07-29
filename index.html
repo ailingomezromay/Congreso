@@ -115,6 +115,39 @@
   footer{background:var(--bg); color:#8A8C93; padding:30px 0; font-size:13px}
   a{color:var(--brand)}
 
+  /* ---------- Mapa de provincias (cartograma) ---------- */
+  .maprow{display:flex; flex-wrap:wrap; gap:30px; align-items:flex-start}
+  .mapcol{flex:0 0 auto}
+  .argmap{display:grid; grid-template-columns:repeat(5,42px); grid-auto-rows:42px; gap:6px}
+  .prov{position:relative; border-radius:6px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    font-family:"Space Mono",monospace; font-size:10px; font-weight:700; color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.35);
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,.06); transition:transform .1s}
+  .prov:hover{transform:scale(1.14); z-index:3; box-shadow:0 0 0 2px var(--ink)}
+  .prov.sel{box-shadow:0 0 0 2.5px var(--ink)}
+  .prov.dim{opacity:.26}
+  .maplegend{display:flex; align-items:center; gap:10px; font-family:"Space Mono",monospace; font-size:11px; color:var(--muted); margin-top:14px}
+  .maplegend .bar{height:10px; width:110px; border-radius:6px; background:linear-gradient(90deg,#C0392B,#E1A93E,#2E9E5B)}
+  .provlist{flex:1 1 300px; min-width:260px}
+  .provlist .row{grid-template-columns:130px 1fr}
+  .provcap{font-family:"Space Mono",monospace; font-size:13.5px; color:var(--ink); margin:18px 0 0; min-height:20px}
+  .provcap .x{color:var(--brand); cursor:pointer; margin-left:10px; text-decoration:underline}
+
+  /* filas / bancas clicables */
+  tbody tr.rowlink,.seats .seat,.provlist .row,#peores-dip .row,#peores-sen .row{cursor:pointer}
+
+  /* ---------- Modal ficha compartible ---------- */
+  .modal{position:fixed; inset:0; background:rgba(20,21,26,.62); backdrop-filter:blur(3px);
+    display:none; align-items:center; justify-content:center; padding:20px; z-index:50}
+  .modal.open{display:flex}
+  .fichabox{background:var(--paper); border-radius:16px; max-width:430px; width:100%; max-height:92vh; overflow:auto; padding:16px}
+  .fichabox canvas{width:100%; height:auto; border-radius:11px; display:block; box-shadow:0 10px 34px rgba(0,0,0,.22)}
+  .ficha-actions{display:flex; flex-wrap:wrap; gap:9px; margin-top:14px}
+  .ficha-actions button{flex:1 1 auto; padding:11px 14px; border-radius:9px; border:1.5px solid var(--ink);
+    background:var(--card); color:var(--ink); font-weight:600; font-size:14px; font-family:"Inter",sans-serif; cursor:pointer}
+  .ficha-actions button.solid{background:var(--ink); color:var(--paper)}
+  .ficha-actions button.ghost{border-color:var(--line)}
+  .ficha-actions button:hover{opacity:.9}
+
   .hidden{display:none}
   @media (max-width:600px){
     .row{grid-template-columns:130px 1fr} .row .name{font-size:13px}
@@ -169,9 +202,23 @@
   </section>
 
   <section>
+    <p class="kick2">El mapa de las ausencias</p>
+    <h2>¿Qué provincia falta más?</h2>
+    <p class="sub">Presentismo promedio de los diputados de cada provincia. El color es <b>relativo</b> a esta cámara: cuanto más verde, más asisten; el rojo son las que más faltan. Tocá una provincia para filtrar la tabla de abajo.</p>
+    <div class="maprow">
+      <div class="mapcol">
+        <div class="argmap" id="mapa-dip"></div>
+        <div class="maplegend"><span>Falta más</span><span class="bar"></span><span>Falta menos</span></div>
+      </div>
+      <div class="bars provlist" id="provlist-dip"></div>
+    </div>
+    <p class="provcap" id="provcap-dip"></p>
+  </section>
+
+  <section>
     <p class="kick2">Los 15 que más faltaron</p>
     <h2>Nombre por nombre</h2>
-    <p class="sub">Ordenados por menor presentismo. La barra lleva el color de su bloque.</p>
+    <p class="sub">Ordenados por menor presentismo. La barra lleva el color de su bloque. Tocá a cualquiera para ver su ficha.</p>
     <div class="bars" id="peores-dip"></div>
   </section>
 
@@ -231,9 +278,23 @@
   </section>
 
   <section>
+    <p class="kick2">El mapa de las ausencias</p>
+    <h2>¿Qué provincia falta más?</h2>
+    <p class="sub">Presentismo promedio de los senadores de cada provincia. El color es <b>relativo</b> a esta cámara: cuanto más verde, más asisten; el rojo son las que más faltan. Tocá una provincia para filtrar la tabla de abajo.</p>
+    <div class="maprow">
+      <div class="mapcol">
+        <div class="argmap" id="mapa-sen"></div>
+        <div class="maplegend"><span>Falta más</span><span class="bar"></span><span>Falta menos</span></div>
+      </div>
+      <div class="bars provlist" id="provlist-sen"></div>
+    </div>
+    <p class="provcap" id="provcap-sen"></p>
+  </section>
+
+  <section>
     <p class="kick2">Los 15 que más faltaron</p>
     <h2>Nombre por nombre</h2>
-    <p class="sub">Ordenados por menor presentismo. La barra lleva el color de su bloque.</p>
+    <p class="sub">Ordenados por menor presentismo. La barra lleva el color de su bloque. Tocá a cualquiera para ver su ficha.</p>
     <div class="bars" id="peores-sen"></div>
   </section>
 
@@ -270,6 +331,19 @@
     </div>
   </section>
 </main>
+</div>
+
+<!-- ====================== FICHA COMPARTIBLE ====================== -->
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Ficha del legislador">
+  <div class="fichabox">
+    <canvas id="ficha-canvas" width="1080" height="1350"></canvas>
+    <div class="ficha-actions">
+      <button class="solid" id="ficha-share">Compartir</button>
+      <button id="ficha-download">Descargar imagen</button>
+      <button id="ficha-link">Copiar link</button>
+      <button class="ghost" id="ficha-close">Cerrar</button>
+    </div>
+  </div>
 </div>
 
 <footer><div class="wrap">Datos de dominio público (Congreso de la Nación vía ArgentinaDatos). Banca Vacía recopila y ordena información oficial.</div></footer>
@@ -309,9 +383,39 @@ function norm(s){return (s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').
 function pctPill(p){ if(p>=80)return{bg:'#E7F0E9',fg:'#1c5b30'}; if(p>=60)return{bg:'#FBF3DF',fg:'#7a5b12'}; return{bg:'#FBE3E4',fg:'#8f1d26'};}
 function animar(){requestAnimationFrame(()=>document.querySelectorAll('.fill').forEach(f=>f.style.width=f.dataset.w+'%'));}
 
+/* ---- Provincias: layout tipo cartograma + normalización de nombres ---- */
+const PROV = {
+  'Jujuy':{c:'JY',r:0,co:2}, 'Salta':{c:'SA',r:1,co:2}, 'Formosa':{c:'FO',r:1,co:4},
+  'Catamarca':{c:'CA',r:2,co:1}, 'Tucumán':{c:'TU',r:2,co:2}, 'Santiago del Estero':{c:'SE',r:2,co:3},
+  'Chaco':{c:'CH',r:2,co:4}, 'Misiones':{c:'MI',r:2,co:5},
+  'La Rioja':{c:'LR',r:3,co:1}, 'Córdoba':{c:'CB',r:3,co:2}, 'Santa Fe':{c:'SF',r:3,co:3}, 'Corrientes':{c:'CO',r:3,co:4},
+  'San Juan':{c:'SJ',r:4,co:1}, 'San Luis':{c:'SL',r:4,co:2}, 'Entre Ríos':{c:'ER',r:4,co:3},
+  'Mendoza':{c:'MZ',r:5,co:1}, 'La Pampa':{c:'LP',r:5,co:2}, 'Buenos Aires':{c:'BA',r:5,co:3}, 'CABA':{c:'CABA',r:5,co:4},
+  'Neuquén':{c:'NQ',r:6,co:1}, 'Río Negro':{c:'RN',r:6,co:2},
+  'Chubut':{c:'CU',r:7,co:2}, 'Santa Cruz':{c:'SC',r:8,co:2}, 'Tierra del Fuego':{c:'TF',r:9,co:2},
+};
+// diccionario nombre-normalizado -> nombre canónico
+const PROV_LOOKUP = (()=>{ const m={}; Object.keys(PROV).forEach(k=>m[norm(k)]=k); return m; })();
+function provCanon(nombre){
+  const s = norm(nombre);
+  if(!s) return null;
+  if(s.includes('ciudad')) return 'CABA';                 // "Ciudad de/Autónoma de Buenos Aires"
+  if(s.includes('tierra del fuego')) return 'Tierra del Fuego';
+  if(s === 'buenos aires') return 'Buenos Aires';
+  return PROV_LOOKUP[s] || null;
+}
+// escala de color roja→ámbar→verde. Modo relativo (min-max) para dar contraste.
+function mezcla(a,b,t){ return a.map((v,i)=>Math.round(v+(b[i]-v)*t)); }
+function colorEscala(t){ // t en 0..1
+  t=Math.max(0,Math.min(1,t));
+  const rojo=[192,57,43], ambar=[225,169,62], verde=[46,158,91];
+  const c = t<0.5 ? mezcla(rojo,ambar,t/0.5) : mezcla(ambar,verde,(t-0.5)/0.5);
+  return `rgb(${c[0]},${c[1]},${c[2]})`;
+}
+
 /* ---- Una "vista" (cámara) que se dibuja sola con su config ---- */
 function crearVista(cfg){
-  let RANKING=[], DATOS=null, filtroGrupo=null, filtroTexto='', sortKey='presentismo_%', sortAsc=true;
+  let RANKING=[], DATOS=null, filtroGrupo=null, filtroProv=null, filtroTexto='', sortKey='presentismo_%', sortAsc=true, porNombre={};
   const el = id => document.getElementById(id);
   const nodo = k => el(cfg.ids[k]);
   const grupo = b => grupoDe(b, cfg.grupos);
@@ -354,7 +458,7 @@ function crearVista(cfg){
     nodo('seats').innerHTML = ord.map(r=>{
       const g=grupo(r.bloque), p=r['presentismo_%'], alpha=(0.18+0.82*p/100);
       const oculto = filtroGrupo && g.n!==filtroGrupo ? ' hide':'';
-      return `<div class="seat${oculto}" style="background:${hexRgba(g.c,alpha)}" title="${quien(r)} · ${g.n} · ${p}%"></div>`;
+      return `<div class="seat${oculto}" data-n="${encodeURIComponent(quien(r))}" style="background:${hexRgba(g.c,alpha)}" title="${quien(r)} · ${g.n} · ${p}%"></div>`;
     }).join('');
   }
   function bloques(){
@@ -374,15 +478,67 @@ function crearVista(cfg){
     const p=[...RANKING].sort((a,b)=>a['presentismo_%']-b['presentismo_%']).slice(0,15);
     nodo('peores').innerHTML = p.map(r=>{
       const g=grupo(r.bloque);
-      return `<div class="row">
+      return `<div class="row" data-n="${encodeURIComponent(quien(r))}">
         <div class="name">${quien(r)}<small>${g.n} · ${r.provincia||''}</small></div>
         <div class="track"><div class="fill" data-w="${r['presentismo_%']}" style="background:${g.c}"></div><span class="pct">${r['presentismo_%']}%</span></div>
       </div>`;}).join('');
     animar();
   }
+
+  /* ---- Mapa de provincias + ranking provincial ---- */
+  function provAgg(){
+    const agg={};
+    RANKING.forEach(r=>{
+      const k=provCanon(r.provincia); if(!k) return;
+      const a = agg[k] || (agg[k]={sum:0,n:0,aus:0});
+      a.sum += r['presentismo_%']; a.n++; a.aus += (r.ausentes||0);
+    });
+    Object.keys(agg).forEach(k=>agg[k].prom = agg[k].sum/agg[k].n);
+    return agg;
+  }
+  function mapa(){
+    const agg = provAgg();
+    const proms = Object.values(agg).map(a=>a.prom);
+    const min = Math.min(...proms), max = Math.max(...proms), span = (max-min)||1;
+    // tiles
+    nodo('mapa').innerHTML = Object.entries(PROV).map(([nom,pos])=>{
+      const a = agg[nom];
+      const t = a ? (a.prom-min)/span : 0;
+      const bg = a ? colorEscala(t) : '#E7E5DE';
+      const sel = filtroProv===nom ? ' sel' : '';
+      const dim = filtroProv && filtroProv!==nom ? ' dim' : '';
+      const tip = a ? `${nom} · ${a.prom.toFixed(0)}% · ${a.n} ${cfg.persLower}${a.n>1?'s':''}` : `${nom} · sin datos`;
+      return `<div class="prov${sel}${dim}" data-p="${encodeURIComponent(nom)}" title="${tip}"
+        style="grid-column:${pos.co}; grid-row:${pos.r+1}; background:${bg}">${pos.c}</div>`;
+    }).join('');
+    // lista rankeada (peor primero)
+    const filas = Object.entries(agg).map(([n,a])=>({n,prom:a.prom,cant:a.n})).sort((x,y)=>x.prom-y.prom);
+    nodo('provlist').innerHTML = filas.map(f=>{
+      const t=(f.prom-min)/span, col=colorEscala(t), sel = filtroProv===f.n?' style="font-weight:700"':'';
+      return `<div class="row" data-p="${encodeURIComponent(f.n)}">
+        <div class="name"${sel}>${f.n}<small>${f.cant} ${cfg.persLower}${f.cant>1?'s':''}</small></div>
+        <div class="track"><div class="fill" data-w="${f.prom.toFixed(1)}" style="background:${col}"></div><span class="pct">${f.prom.toFixed(0)}%</span></div>
+      </div>`;
+    }).join('');
+    animar();
+    provCap();
+  }
+  function provCap(){
+    const cap = nodo('provcap'); if(!cap) return;
+    if(!filtroProv){ cap.innerHTML=''; return; }
+    const a = provAgg()[filtroProv];
+    if(!a){ cap.innerHTML=''; return; }
+    cap.innerHTML = `Mostrando <b>${filtroProv}</b>: ${a.n} ${cfg.persLower}${a.n>1?'s':''}, presentismo promedio ${a.prom.toFixed(0)}%. <span class="x" data-clear="1">quitar filtro</span>`;
+  }
+  function setProv(nom){
+    filtroProv = (filtroProv===nom) ? null : nom;
+    mapa(); tabla();
+  }
+
   function tabla(){
     let filas=RANKING.map((r,i)=>({...r,rank:i+1}));
     if(filtroGrupo) filas=filas.filter(r=>grupo(r.bloque).n===filtroGrupo);
+    if(filtroProv) filas=filas.filter(r=>provCanon(r.provincia)===filtroProv);
     if(filtroTexto) filas=filas.filter(r=>norm(quien(r)).includes(filtroTexto));
     filas.sort((a,b)=>{
       let x = sortKey==='nombre' ? quien(a) : a[sortKey];
@@ -391,7 +547,7 @@ function crearVista(cfg){
     });
     nodo('tbody').innerHTML = filas.map(r=>{
       const g=grupo(r.bloque), col=pctPill(r['presentismo_%']);
-      return `<tr>
+      return `<tr class="rowlink" data-n="${encodeURIComponent(quien(r))}">
         <td class="num">${r.rank}</td>
         <td>${quien(r)}</td>
         <td class="hide-sm"><span class="bdot" style="background:${g.c}"></span><span class="bloq">${r.bloque}</span></td>
@@ -399,6 +555,9 @@ function crearVista(cfg){
         <td class="num hide-sm">${r.ausentes}</td>
       </tr>`;}).join('');
   }
+
+  function abrir(nombre){ const r=porNombre[nombre]; if(r) mostrarFicha(r, cfg, grupo(r.bloque)); }
+
   function eventos(){
     nodo('buscar').addEventListener('input',e=>{filtroTexto=norm(e.target.value.trim());tabla();});
     document.querySelectorAll(cfg.container+' th[data-k]').forEach(th=>th.addEventListener('click',()=>{
@@ -406,46 +565,247 @@ function crearVista(cfg){
       if(k===sortKey)sortAsc=!sortAsc; else {sortKey=k;sortAsc=(k==='nombre'||k==='bloque');}
       tabla();
     }));
+    // click en fila/banca -> abrir ficha
+    const abrirDeEvento = e => {
+      const t = e.target.closest('[data-n]'); if(!t) return;
+      abrir(decodeURIComponent(t.dataset.n));
+    };
+    nodo('tbody').addEventListener('click', abrirDeEvento);
+    nodo('peores').addEventListener('click', abrirDeEvento);
+    nodo('seats').addEventListener('click', abrirDeEvento);
+    // click en provincia (mapa o lista) -> filtrar
+    const provDeEvento = e => {
+      if(e.target.dataset && e.target.dataset.clear){ filtroProv=null; mapa(); tabla(); return; }
+      const t = e.target.closest('[data-p]'); if(!t) return;
+      setProv(decodeURIComponent(t.dataset.p));
+    };
+    nodo('mapa').addEventListener('click', provDeEvento);
+    nodo('provlist').addEventListener('click', provDeEvento);
+    nodo('provcap').addEventListener('click', provDeEvento);
   }
 
   return {
-    cargar(d){ DATOS=d; RANKING=d.ranking; chips(); seats(); bloques(); peores(); tabla(); eventos(); },
+    cargar(d){ DATOS=d; RANKING=d.ranking; porNombre={}; RANKING.forEach(r=>porNombre[quien(r)]=r);
+               chips(); seats(); bloques(); peores(); mapa(); tabla(); eventos(); },
     activar(){ if(DATOS) cabecera(); },
-    listo(){ return !!DATOS; }
+    abrir, listo(){ return !!DATOS; }
   };
 }
 
 const vistaDip = crearVista({
-  grupos: GRUPOS_DIP, container:'#tab-dip',
+  grupos: GRUPOS_DIP, container:'#tab-dip', camara:'dip',
   kicker:'Observatorio del Congreso · Cámara de Diputados',
-  personasLabel:'Diputados', persCap:'El diputado', persLower:'diputado', minBloque:3,
+  personasLabel:'Diputados', persCap:'El diputado', persLower:'diputado', persFicha:'Diputado/a', minBloque:3,
   csv: a=>`presentismo_diputados_${a}.csv`,
-  ids:{chips:'chips-dip',seats:'seats-dip',bloques:'bloques-dip',peores:'peores-dip',tbody:'tbody-dip',buscar:'buscar-dip',csv:'csv-dip'},
+  ids:{chips:'chips-dip',seats:'seats-dip',bloques:'bloques-dip',peores:'peores-dip',tbody:'tbody-dip',buscar:'buscar-dip',csv:'csv-dip',mapa:'mapa-dip',provlist:'provlist-dip',provcap:'provcap-dip'},
 });
 const vistaSen = crearVista({
-  grupos: GRUPOS_SEN, container:'#tab-sen',
+  grupos: GRUPOS_SEN, container:'#tab-sen', camara:'sen',
   kicker:'Observatorio del Congreso · Cámara de Senadores',
-  personasLabel:'Senadores', persCap:'El senador', persLower:'senador', minBloque:2,
+  personasLabel:'Senadores', persCap:'El senador', persLower:'senador', persFicha:'Senador/a', minBloque:2,
   csv: a=>`presentismo_senadores_${a}.csv`,
-  ids:{chips:'chips-sen',seats:'seats-sen',bloques:'bloques-sen',peores:'peores-sen',tbody:'tbody-sen',buscar:'buscar-sen',csv:'csv-sen'},
+  ids:{chips:'chips-sen',seats:'seats-sen',bloques:'bloques-sen',peores:'peores-sen',tbody:'tbody-sen',buscar:'buscar-sen',csv:'csv-sen',mapa:'mapa-sen',provlist:'provlist-sen',provcap:'provcap-sen'},
 });
 
 /* ---- Solapas ---- */
+function irACamara(camara){
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active', x.dataset.tab===camara));
+  const sen = camara==='sen';
+  $('#tab-dip').classList.toggle('hidden', sen);
+  $('#tab-sen').classList.toggle('hidden', !sen);
+  (sen?vistaSen:vistaDip).activar();
+}
 document.querySelectorAll('.tab').forEach(t=>{
-  t.addEventListener('click',()=>{
-    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-    t.classList.add('active');
-    const sen = t.dataset.tab==='sen';
-    $('#tab-dip').classList.toggle('hidden', sen);
-    $('#tab-sen').classList.toggle('hidden', !sen);
-    (sen?vistaSen:vistaDip).activar();
-  });
+  t.addEventListener('click',()=>irACamara(t.dataset.tab));
 });
 
+/* ====================== FICHA COMPARTIBLE (canvas) ====================== */
+let fichaActual = null; // {nombre, camara}
+const SITIO = 'ailingomezromay.github.io/Congreso';
+
+function iniciales(nombre){
+  const partes = String(nombre).split(',');
+  const ape = (partes[0]||'').trim();
+  const nom = (partes[1]||'').trim();
+  const a = ape ? ape[0] : '';
+  const b = nom ? nom[0] : (ape.split(' ')[1]||'')[0]||'';
+  return (a+ (b||'')).toUpperCase();
+}
+function slug(s){ return norm(s).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
+function wrap(ctx, texto, maxW){
+  const palabras = String(texto).split(' '); const lineas=[]; let linea='';
+  palabras.forEach(p=>{
+    const prueba = linea ? linea+' '+p : p;
+    if(ctx.measureText(prueba).width > maxW && linea){ lineas.push(linea); linea=p; }
+    else linea=prueba;
+  });
+  if(linea) lineas.push(linea);
+  return lineas;
+}
+
+async function dibujarFicha(r, cfg, g){
+  const cv = document.getElementById('ficha-canvas');
+  const ctx = cv.getContext('2d');
+  const W=cv.width, H=cv.height, P=80;
+  const fuentes=['700 66px "Space Grotesk"','500 30px "Inter"','400 26px "Space Mono"','700 26px "Space Mono"','400 210px "Anton"'];
+  try{ await Promise.all(fuentes.map(f=>document.fonts.load(f))); await document.fonts.ready; }catch(e){}
+
+  const nombre = r.nombre || r.diputado;
+  const p = r['presentismo_%'];
+  const col = g.c;
+  const colPct = colorEscala(Math.max(0,Math.min(1,(p-40)/60))); // absoluto: 40%→rojo, 100%→verde
+
+  // fondo
+  ctx.fillStyle='#14151A'; ctx.fillRect(0,0,W,H);
+
+  // marca
+  ctx.fillStyle='#E91E63'; ctx.fillRect(P,88,26,26);
+  ctx.fillStyle='#F4F3EF'; ctx.textBaseline='alphabetic';
+  ctx.font='700 34px "Space Grotesk", sans-serif';
+  ctx.fillText('BANCA VACÍA', P+40, 112);
+  ctx.fillStyle='#8A8C93'; ctx.font='400 22px "Space Mono", monospace';
+  ctx.fillText('OBSERVATORIO DEL CONGRESO', P+40, 144);
+  // hairline
+  ctx.strokeStyle='#2A2C33'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(P,190); ctx.lineTo(W-P,190); ctx.stroke();
+
+  // etiqueta cámara
+  ctx.fillStyle='#E91E63'; ctx.font='700 24px "Space Mono", monospace';
+  ctx.fillText(`${cfg.persFicha.toUpperCase()} · ${DATOS_ANIO}`, P, 252);
+
+  // nombre (hasta 3 líneas)
+  ctx.fillStyle='#FFFFFF'; ctx.font='700 66px "Space Grotesk", sans-serif';
+  const lineas = wrap(ctx, nombre, W-2*P).slice(0,3);
+  let y=326;
+  lineas.forEach(l=>{ ctx.fillText(l, P, y); y+=76; });
+
+  // bloque + provincia
+  const yBloc = y+6;
+  ctx.fillStyle=col; ctx.beginPath(); ctx.arc(P+11, yBloc-10, 11, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle='#D9D8D2'; ctx.font='500 30px "Inter", sans-serif';
+  ctx.fillText(r.bloque, P+34, yBloc);
+  ctx.fillStyle='#8A8C93'; ctx.font='400 26px "Space Mono", monospace';
+  ctx.fillText(provCanon(r.provincia)||r.provincia||'', P, yBloc+42);
+
+  // monograma (arriba a la derecha)
+  const mx=W-P-70, my=250;
+  ctx.fillStyle=col; ctx.beginPath(); ctx.arc(mx,my,66,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#FFFFFF'; ctx.textAlign='center'; ctx.font='700 52px "Space Grotesk", sans-serif';
+  ctx.fillText(iniciales(nombre), mx, my+18); ctx.textAlign='left';
+
+  // número grande de presentismo
+  ctx.textAlign='center';
+  ctx.fillStyle='#8A8C93'; ctx.font='400 26px "Space Mono", monospace';
+  ctx.fillText('PRESENTISMO', W/2, 790);
+  ctx.fillStyle=colPct; ctx.font='400 210px "Anton", sans-serif';
+  ctx.fillText(p.toFixed(0)+'%', W/2, 960);
+  ctx.textAlign='left';
+
+  // barra de progreso
+  const bx=P, bw=W-2*P, by=1000, bh=34;
+  ctx.fillStyle='#2A2C33'; roundRect(ctx,bx,by,bw,bh,17); ctx.fill();
+  ctx.fillStyle=col; roundRect(ctx,bx,by,Math.max(bh, bw*p/100),bh,17); ctx.fill();
+
+  // stats
+  const stats=[['Presente', r.presentes], ['Ausente', r.ausentes], ['Votaciones', r.votaciones]];
+  const colW=(W-2*P)/3;
+  stats.forEach((s,i)=>{
+    const cx=P+colW*i+colW/2;
+    ctx.textAlign='center';
+    ctx.fillStyle='#F4F3EF'; ctx.font='700 50px "Space Grotesk", sans-serif';
+    ctx.fillText(String(s[1]), cx, 1150);
+    ctx.fillStyle='#8A8C93'; ctx.font='400 22px "Space Mono", monospace';
+    ctx.fillText(String(s[0]).toUpperCase(), cx, 1188);
+  });
+  ctx.textAlign='left';
+
+  // pie
+  ctx.fillStyle='#8A8C93'; ctx.font='400 22px "Space Mono", monospace';
+  ctx.fillText(`${SITIO} · Datos oficiales`, P, 1300);
+}
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath();
+}
+
+let DATOS_ANIO = 2025;
+async function mostrarFicha(r, cfg, g){
+  fichaActual = { nombre: (r.nombre||r.diputado), camara: cfg.camara, cfg, r, g };
+  await dibujarFicha(r, cfg, g);
+  document.getElementById('modal').classList.add('open');
+  try{ history.replaceState(null,'',`#/${cfg.camara}/${encodeURIComponent(fichaActual.nombre)}`); }catch(e){}
+}
+function cerrarFicha(){
+  document.getElementById('modal').classList.remove('open');
+  try{ history.replaceState(null,'',location.pathname+location.search); }catch(e){}
+}
+function canvasBlob(){ return new Promise(res=>document.getElementById('ficha-canvas').toBlob(res,'image/png')); }
+
+document.getElementById('ficha-close').addEventListener('click', cerrarFicha);
+document.getElementById('modal').addEventListener('click', e=>{ if(e.target.id==='modal') cerrarFicha(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') cerrarFicha(); });
+
+document.getElementById('ficha-download').addEventListener('click', async ()=>{
+  const blob = await canvasBlob(); if(!blob) return;
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download=`banca-vacia-${slug(fichaActual.nombre)}.png`;
+  a.click(); setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
+});
+document.getElementById('ficha-share').addEventListener('click', async ()=>{
+  const blob = await canvasBlob(); if(!blob) return;
+  const file = new File([blob], `banca-vacia-${slug(fichaActual.nombre)}.png`, {type:'image/png'});
+  const texto = `${fichaActual.nombre} — presentismo en el Congreso. Vía Banca Vacía.`;
+  if(navigator.canShare && navigator.canShare({files:[file]})){
+    try{ await navigator.share({files:[file], title:'Banca Vacía', text:texto}); return; }catch(e){ if(e.name==='AbortError') return; }
+  }
+  // fallback: descargar + copiar link
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download=file.name; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+  try{ await navigator.clipboard.writeText(location.href); }catch(e){}
+});
+document.getElementById('ficha-link').addEventListener('click', async ()=>{
+  const btn=document.getElementById('ficha-link'); const txt=btn.textContent;
+  try{ await navigator.clipboard.writeText(location.href); btn.textContent='¡Link copiado!'; }
+  catch(e){ btn.textContent='Copiá desde la barra'; }
+  setTimeout(()=>btn.textContent=txt, 1800);
+});
+
+/* ---- Abrir ficha desde el link (#/dip/Nombre) ---- */
+function abrirDesdeHash(){
+  const h = decodeURIComponent(location.hash||'');
+  const m = h.match(/^#\/(dip|sen)\/(.+)$/);
+  if(!m) return;
+  const camara=m[1], nombre=m[2];
+  irACamara(camara);
+  const v = camara==='sen'?vistaSen:vistaDip;
+  if(v.listo()) v.abrir(nombre);
+}
+
+/* ---- Normalizar senadores.json (viene con otra forma) ---- */
+function normalizarSen(d){
+  if(d && d.ranking) return d;                 // ya está en el formato esperado
+  if(d && Array.isArray(d.senadores)){
+    return {
+      anio: d.anio, actualizado: d.actualizado, total_votaciones: d.total_votaciones,
+      ranking: d.senadores.map(s=>({
+        nombre: s.nombre, bloque: s.bloque, provincia: s.provincia,
+        presentes: s.presente, ausentes: (s.total - s.presente),
+        votaciones: s.total, 'presentismo_%': s.presentismo
+      }))
+    };
+  }
+  return SEN_FALLBACK;
+}
+
 /* ---- Carga de datos (con respaldo offline) ---- */
-fetch('./datos.json').then(r=>r.ok?r.json():Promise.reject()).then(d=>{vistaDip.cargar(d);vistaDip.activar();})
-  .catch(()=>{vistaDip.cargar(DATOS_FALLBACK);vistaDip.activar();});
-fetch('./senadores.json').then(r=>r.ok?r.json():Promise.reject()).then(d=>vistaSen.cargar(d))
+fetch('./datos.json').then(r=>r.ok?r.json():Promise.reject()).then(d=>{
+    DATOS_ANIO = d.anio || DATOS_ANIO; vistaDip.cargar(d); vistaDip.activar(); abrirDesdeHash();
+  })
+  .catch(()=>{ vistaDip.cargar(DATOS_FALLBACK); vistaDip.activar(); abrirDesdeHash(); });
+fetch('./senadores.json').then(r=>r.ok?r.json():Promise.reject()).then(d=>{
+    vistaSen.cargar(normalizarSen(d)); abrirDesdeHash();
+  })
   .catch(()=>vistaSen.cargar(SEN_FALLBACK));
 </script>
 </body>
